@@ -1,6 +1,8 @@
-## EN
+# OreBroadcast
 
-### The plugin
+## English
+
+### Description
 
 ...
 
@@ -8,15 +10,13 @@
 
 + /ob reload : Reload config from file
 
-### Dev
+### Download
 
-I use maven to compile, automatic builds are available [here](https://drone.io/github.com/bendem/OreBroadcast/files).
+Automatic builds are available here : [https://drone.io/github.com/bendem/OreBroadcast/files](https://drone.io/github.com/bendem/OreBroadcast/files)
 
----------------------
+## Français
 
-## FR
-
-### Le plugin
+### Description
 
 ...
 
@@ -24,6 +24,6 @@ I use maven to compile, automatic builds are available [here](https://drone.io/g
 
 + /ob reload : Recharge la config depuis le fichier
 
-### Dev
+### Téléchargement
 
-J'utilise maven pour la compilation, les builds automatisées sont disponibles [ici](https://drone.io/github.com/bendem/OreBroadcast/files).
+Les builds seront disponible ici : [https://drone.io/github.com/bendem/OreBroadcast/files](https://drone.io/github.com/bendem/OreBroadcast/files)
