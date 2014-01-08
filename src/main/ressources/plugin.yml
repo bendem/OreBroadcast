@@ -1,0 +1,21 @@
+name: ${pom.name}
+main: ${pom.groupId}.${pom.name}
+version: ${pom.version}
+author: bendem
+description: Broadcast the server when you find ores.
+
+commands:
+    ob:
+        usage: |
+            /<ob> [reload] Reload config from file
+        description: OreBroadcast commands
+        permission: ob
+
+permissions:
+    ob.*:
+        description: Give access to all OreBroadcast commands
+        children:
+            ob.reload: true
+    ob.reload:
+        description: Reload config from file
+        default: op
