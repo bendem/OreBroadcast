@@ -1,2 +1,18 @@
 Ores:
+    - Coal
+    - Iron
+    - Gold
     - Lapis
+    - Redstone
+    - Quartz
+    - Diamond
+    - Emerald
+Colors:
+    Coal: Dark_gray
+    Iron: Gray
+    Gold: Yellow
+    Lapis: Dark_blue
+    Redstone: Red
+    Quartz: White
+    Diamond: Aqua
+    Emerald: Green
