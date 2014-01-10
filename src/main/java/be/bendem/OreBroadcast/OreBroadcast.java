@@ -18,13 +18,12 @@ public class OreBroadcast extends JavaPlugin {
     @Override
     public void onEnable() {
         logger = getLogger();
-
         pdfFile = getDescription();
-        logger.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 
+        saveDefaultConfig();
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getCommand("ob").setExecutor(new CommandHandler(this));
-        saveDefaultConfig();
+        logger.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 
     @Override
