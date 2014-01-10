@@ -5,6 +5,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 
@@ -18,8 +19,9 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        // Reject creative users
-        if(event.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+        // Reject creative users and users without ob.broadcast permission
+        if(event.getPlayer().getGameMode() != GameMode.SURVIVAL
+           || !event.getPlayer().hasPermission("ob.broadcast")) {
             return;
         }
 
@@ -27,14 +29,15 @@ public class BlockBreakListener implements Listener {
         ArrayList<String> blocksToBroadcast = new ArrayList<String>(plugin.getConfig().getStringList("Ores"));
         for (int i = 0; i < blocksToBroadcast.size(); ++i) {
             blocksToBroadcast.set(i, blocksToBroadcast.get(i).toUpperCase() + "_ORE");
-            // TODO : Handle glowing redstone ore (id 74) and redstone ore (id 73)
-            // if(blocksToBroadcast.get(i).equals("REDSTONE_ORE")) {
-            //     plugin.logger.info(blocksToBroadcast.get(i));
-            //     blocksToBroadcast.add("GLOWING_REDSTONE");
-            // }
+            // Handle glowing redstone ore (id 74) and redstone ore (id 73)
+            if(blocksToBroadcast.get(i).equals("REDSTONE_ORE")) {
+                plugin.logger.info(blocksToBroadcast.get(i));
+                blocksToBroadcast.add("GLOWING_REDSTONE");
+            }
         }
 
         if(blocksToBroadcast.contains(event.getBlock().getType().name())) {
+            // TODO broadcast message to all players with ob.receive permission
             plugin.logger.info("----------------------------------------------------------");
             plugin.logger.info(getVeinSize(event.getBlock()) + " block of the same type near this block");
             plugin.logger.info("A block to broadcast broke : " + event.getBlock().getType().name());
@@ -53,9 +56,9 @@ public class BlockBreakListener implements Listener {
         for (i = -1; i < 2; ++i) {
             for (j = -1; j < 2; ++j) {
                 for (k = -1; k < 2; ++k) {
-                    if(vein.contains(block.getRelative(i, j, k))
-                       || !block.getType().equals(block.getRelative(i, j, k).getType())
-                       || (i == 0 && j == 0 && k == 0)) {
+                    if(vein.contains(block.getRelative(i, j, k))       // block already found
+                       || !compare(block, block.getRelative(i, j, k))  // block has not the same type
+                       || (i == 0 && j == 0 && k == 0)) {              // comparing block to itself
                         // Recursion end!
                         continue;
                     }
@@ -66,6 +69,12 @@ public class BlockBreakListener implements Listener {
         }
 
         return vein;
+    }
+
+    public boolean compare(Block block1, Block block2) {
+        return block1.getType().equals(block2.getType())
+            || block1.getType() == Material.GLOWING_REDSTONE_ORE && block2.getType() == Material.REDSTONE_ORE
+            || block1.getType() == Material.REDSTONE_ORE && block2.getType() == Material.GLOWING_REDSTONE_ORE;
     }
 
 }

@@ -16,6 +16,14 @@ permissions:
         description: Give access to all OreBroadcast commands
         children:
             ob.reload: true
+            ob.broadcast: true
+            ob.receive: true
     ob.reload:
         description: Reload config from file
         default: op
+    ob.broadcast:
+        description: Broadcast a message when ore is found
+        default: true
+    ob.receive:
+        description: Receive a broadcasted message
+        default: true
