@@ -1,10 +1,12 @@
 # OreBroadcast
 
+![Preview](preview.jpg)
+
 ## English
 
 ### Description
 
-...
+Broadcast a message to the server when you find ores.
 
 ### Commands
 
@@ -18,9 +20,9 @@ Automatic builds are available here : [https://drone.io/github.com/bendem/OreBro
 
 ### Description
 
-...
+Broadcast un message à tout le serveur quand vous trouvez des minerais.
 
-### Commande
+### Commandes
 
 + /ob reload : Recharge la config depuis le fichier
 
