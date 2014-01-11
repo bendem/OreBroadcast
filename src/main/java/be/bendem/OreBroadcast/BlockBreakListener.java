@@ -29,6 +29,13 @@ public class BlockBreakListener implements Listener {
             return;
         }
 
+        Block block = event.getBlock();
+
+        // Don't broadcast the blocks which has already been broadcasted!
+        if(plugin.alreadyBroadcastedBlocks.contains(block)) {
+            return;
+        }
+
         // Create the list of blocks to broadcast from the file
         ArrayList<String> blocksToBroadcast = new ArrayList<String>(plugin.getConfig().getStringList("ores"));
         for (int i = 0; i < blocksToBroadcast.size(); ++i) {
@@ -39,7 +46,6 @@ public class BlockBreakListener implements Listener {
             }
         }
 
-        Block block = event.getBlock();
         String blockName = (block.getType() == Material.GLOWING_REDSTONE_ORE ? "redstone" :
             block.getType().name().toLowerCase().replace("_ore", ""));
 
@@ -56,7 +62,10 @@ public class BlockBreakListener implements Listener {
     public final int getVeinSize(Block block) {
         ArrayList<Block> vein = new ArrayList<Block>();
         vein.add(block);
-        return getVein(block, vein).size();
+        vein = getVein(block, vein);
+        plugin.alreadyBroadcastedBlocks.addAll(vein);
+
+        return vein.size();
     }
 
     public final ArrayList<Block> getVein(Block block, ArrayList<Block> vein) {
