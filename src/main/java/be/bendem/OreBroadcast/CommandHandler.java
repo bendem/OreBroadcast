@@ -13,20 +13,8 @@ public class CommandHandler implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!cmd.getName().equalsIgnoreCase("ob")) {
-            return false;
-        }
-
-        plugin.logger.info("ob command issued...");
-        if(args.length == 0) {
-            // Default
-
-            // ...............
-
-            return true;
-        }
-
-        if(args[0].equalsIgnoreCase("reload") && args.length == 1) {
+        if(cmd.getName().equalsIgnoreCase("ob") && args.length == 1
+                && args[0].equalsIgnoreCase("reload")) {
             if (sender.hasPermission("ob.reload")) {
                 plugin.reloadConfig();
                 sender.sendMessage("Config reloaded...");

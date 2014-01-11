@@ -25,7 +25,7 @@ public class BlockBreakListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         // Reject creative users and users without ob.broadcast permission
         if(event.getPlayer().getGameMode() != GameMode.SURVIVAL
-           || !event.getPlayer().hasPermission("ob.broadcast")) {
+                || !event.getPlayer().hasPermission("ob.broadcast")) {
             return;
         }
 
