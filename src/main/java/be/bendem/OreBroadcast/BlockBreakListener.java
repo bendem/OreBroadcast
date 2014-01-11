@@ -1,6 +1,10 @@
 package be.bendem.OreBroadcast;
 
+import be.bendem.chatformatter.ChatFormatter;
+
 import org.bukkit.block.Block;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,22 +30,26 @@ public class BlockBreakListener implements Listener {
         }
 
         // Create the list of blocks to broadcast from the file
-        ArrayList<String> blocksToBroadcast = new ArrayList<String>(plugin.getConfig().getStringList("Ores"));
+        ArrayList<String> blocksToBroadcast = new ArrayList<String>(plugin.getConfig().getStringList("ores"));
         for (int i = 0; i < blocksToBroadcast.size(); ++i) {
             blocksToBroadcast.set(i, blocksToBroadcast.get(i).toUpperCase() + "_ORE");
             // Handle glowing redstone ore (id 74) and redstone ore (id 73)
             if(blocksToBroadcast.get(i).equals("REDSTONE_ORE")) {
-                plugin.logger.info(blocksToBroadcast.get(i));
                 blocksToBroadcast.add("GLOWING_REDSTONE");
             }
         }
 
-        if(blocksToBroadcast.contains(event.getBlock().getType().name())) {
-            // TODO broadcast message to all players with ob.receive permission
-            plugin.logger.info("----------------------------------------------------------");
-            plugin.logger.info(getVeinSize(event.getBlock()) + " block of the same type near this block");
-            plugin.logger.info("A block to broadcast broke : " + event.getBlock().getType().name());
-            plugin.logger.info("----------------------------------------------------------");
+        Block block = event.getBlock();
+        String blockName = (block.getType() == Material.GLOWING_REDSTONE_ORE ? "redstone" :
+            block.getType().name().toLowerCase().replace("_ore", ""));
+
+        if(blocksToBroadcast.contains(block.getType().name())) {
+            int veinSize = getVeinSize(block);
+            String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
+
+            broadcast(ChatFormatter.bold(event.getPlayer().getDisplayName()) + " just found "
+                + ChatFormatter.bold(Integer.toString(veinSize)) + " block" + ((veinSize == 1) ? "" : "s") + " of "
+                + ChatFormatter.format(ChatFormatter.bold(blockName), ChatColor.valueOf(color)));
         }
     }
 
@@ -75,6 +83,14 @@ public class BlockBreakListener implements Listener {
         return block1.getType().equals(block2.getType())
             || block1.getType() == Material.GLOWING_REDSTONE_ORE && block2.getType() == Material.REDSTONE_ORE
             || block1.getType() == Material.REDSTONE_ORE && block2.getType() == Material.GLOWING_REDSTONE_ORE;
+    }
+
+    public void broadcast(String message) {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if(player.hasPermission("ob.receive")) {
+                player.sendMessage(message);
+            }
+        }
     }
 
 }
