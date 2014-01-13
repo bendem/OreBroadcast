@@ -12,6 +12,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class BlockBreakListener implements Listener {
 
@@ -30,11 +31,13 @@ public class BlockBreakListener implements Listener {
         }
 
         Block block = event.getBlock();
-
         // Don't broadcast the blocks which has already been broadcasted!
         if(plugin.alreadyBroadcastedBlocks.contains(block)) {
             return;
         }
+
+        // Measuring event time
+        long timer = System.currentTimeMillis();
 
         // Create the list of blocks to broadcast from the file
         ArrayList<String> blocksToBroadcast = new ArrayList<String>(plugin.getConfig().getStringList("ores"));
@@ -57,10 +60,12 @@ public class BlockBreakListener implements Listener {
                 + ChatFormatter.bold(Integer.toString(veinSize)) + " block" + ((veinSize == 1) ? "" : "s") + " of "
                 + ChatFormatter.format(ChatFormatter.bold(blockName), ChatColor.valueOf(color)));
         }
+
+        plugin.logger.finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
     }
 
     public final int getVeinSize(Block block) {
-        ArrayList<Block> vein = new ArrayList<Block>();
+        HashSet<Block> vein = new HashSet<Block>();
         vein.add(block);
         vein = getVein(block, vein);
         plugin.alreadyBroadcastedBlocks.addAll(vein);
@@ -68,7 +73,7 @@ public class BlockBreakListener implements Listener {
         return vein.size();
     }
 
-    public final ArrayList<Block> getVein(Block block, ArrayList<Block> vein) {
+    public final HashSet<Block> getVein(Block block, HashSet<Block> vein) {
         int i, j, k;
         for (i = -1; i < 2; ++i) {
             for (j = -1; j < 2; ++j) {
@@ -80,7 +85,7 @@ public class BlockBreakListener implements Listener {
                         continue;
                     }
                     vein.add(block.getRelative(i, j, k));
-                    vein = getVein(vein.get(vein.size() - 1), vein);
+                    vein = getVein(block.getRelative(i, j, k), vein);
                 }
             }
         }
