@@ -16,3 +16,6 @@ colors:
     quartz: white
     diamond: aqua
     emerald: green
+
+message: "{player} just found {count} block{plural} of {ore}"
+plural: s

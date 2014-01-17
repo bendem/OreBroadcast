@@ -56,9 +56,14 @@ public class BlockBreakListener implements Listener {
             int veinSize = getVeinSize(block);
             String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
 
-            broadcast(ChatFormatter.bold(event.getPlayer().getDisplayName()) + " just found "
-                + ChatFormatter.bold(Integer.toString(veinSize)) + " block" + ((veinSize == 1) ? "" : "s") + " of "
-                + ChatFormatter.format(ChatFormatter.bold(blockName), ChatColor.valueOf(color)));
+            broadcast(format(
+                plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
+                event.getPlayer().getDisplayName(),
+                Integer.toString(veinSize),
+                blockName,
+                color,
+                veinSize > 1
+            ));
         }
 
         plugin.logger.finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
@@ -105,6 +110,14 @@ public class BlockBreakListener implements Listener {
                 player.sendMessage(message);
             }
         }
+    }
+
+    public final String format(String msg, String player, String count, String ore, String color, boolean plural) {
+        return msg
+            .replace("{player}", ChatFormatter.bold(player))
+            .replace("{count}",  ChatFormatter.bold(count))
+            .replace("{ore}",    ChatFormatter.format(ChatFormatter.bold(ore), ChatColor.valueOf(color)))
+            .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : "");
     }
 
 }
