@@ -69,7 +69,7 @@ public class BlockBreakListener implements Listener {
         plugin.logger.finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
     }
 
-    public final int getVeinSize(Block block) {
+    private final int getVeinSize(Block block) {
         HashSet<Block> vein = new HashSet<Block>();
         vein.add(block);
         vein = getVein(block, vein);
@@ -78,7 +78,7 @@ public class BlockBreakListener implements Listener {
         return vein.size();
     }
 
-    public final HashSet<Block> getVein(Block block, HashSet<Block> vein) {
+    private final HashSet<Block> getVein(Block block, HashSet<Block> vein) {
         int i, j, k;
         for (i = -1; i < 2; ++i) {
             for (j = -1; j < 2; ++j) {
@@ -98,13 +98,13 @@ public class BlockBreakListener implements Listener {
         return vein;
     }
 
-    public boolean compare(Block block1, Block block2) {
+    private boolean compare(Block block1, Block block2) {
         return block1.getType().equals(block2.getType())
             || block1.getType() == Material.GLOWING_REDSTONE_ORE && block2.getType() == Material.REDSTONE_ORE
             || block1.getType() == Material.REDSTONE_ORE && block2.getType() == Material.GLOWING_REDSTONE_ORE;
     }
 
-    public void broadcast(String message) {
+    private void broadcast(String message) {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if(player.hasPermission("ob.receive")) {
                 player.sendMessage(message);
@@ -112,12 +112,22 @@ public class BlockBreakListener implements Listener {
         }
     }
 
-    public final String format(String msg, String player, String count, String ore, String color, boolean plural) {
-        return msg
-            .replace("{player}", ChatFormatter.bold(player))
-            .replace("{count}",  ChatFormatter.bold(count))
-            .replace("{ore}",    ChatFormatter.format(ChatFormatter.bold(ore), ChatColor.valueOf(color)))
-            .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : "");
+    private final String format(String msg, String player, String count, String ore, String color, boolean plural) {
+        return colorize(msg
+            .replace("{player}", player)
+            .replace("{count}",  count)
+            .replace("{ore}",    translateOre(ore, color))
+            .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : ""));
+    }
+
+    private final String translateOre(String ore, String color) {
+        return "&" + ChatColor.valueOf(color).getChar()
+            + plugin.getConfig().getString("ore-translations." + ore, ore)
+            + "&" + ChatColor.RESET.getChar();
+    }
+
+    private final String colorize(String msg) {
+        return ChatColor.translateAlternateColorCodes('&', msg);
     }
 
 }

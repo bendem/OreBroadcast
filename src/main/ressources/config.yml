@@ -1,3 +1,4 @@
+# A list of the ores which will be broadcasted when found
 ores:
     - coal
     - iron
@@ -7,6 +8,9 @@ ores:
     - quartz
     - diamond
     - emerald
+
+# The colors to use to color the ores in the broadcast message.
+# See the end of the file for a list of available colors
 colors:
     coal: dark_gray
     iron: gray
@@ -17,5 +21,47 @@ colors:
     diamond: aqua
     emerald: green
 
-message: "{player} just found {count} block{plural} of {ore}"
+# The message to be broadcasted (you can use the tags {player}, {count}, {plural} and {ore})
+# You can use colors by using &colorcode
+# Note that the {ore} will be replaced by &colorcode{ore}&reset
+# See the end of the file for a list of available color codes
+message: "&l{player}&r just found &l{count}&r block{plural} of [&l&k{ore}&r]"
+# The text to add when more than one ore is found
+# (Will be used by the tag {plural})
 plural: s
+
+# The ore translation to use in the message
+ore-translations:
+    coal: coal
+    iron: iron
+    gold: gold
+    lapis: lapis
+    redstone: redstone
+    quartz: quartz
+    diamond: diamond
+    emerald: emerald
+
+# Colors and color codes available :
+# Use the colors for the ore list and the color codes for the message
+#   black : 0
+#   dark_blue : 1
+#   dark_green : 2
+#   dark_aqua : 3
+#   dark_red : 4
+#   dark_purple : 5
+#   gold : 6
+#   gray : 7
+#   dark_gray : 8
+#   blue : 9
+#   green : a
+#   aqua : b
+#   red : c
+#   light_purple : d
+#   yellow : e
+#   white : f
+#   magic : k
+#   bold : l
+#   strikethrough : m
+#   underline : n
+#   italic : o
+#   reset : r
