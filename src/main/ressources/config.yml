@@ -1,4 +1,4 @@
-# A list of the ores which will be broadcasted when found
+# A list of the ores which will be broadcasted when found.
 ores:
     - coal
     - iron
@@ -10,7 +10,7 @@ ores:
     - emerald
 
 # The colors to use to color the ores in the broadcast message.
-# See the end of the file for a list of available colors
+# See the end of the file for a list of available colors.
 colors:
     coal: dark_gray
     iron: gray

@@ -1,7 +1,5 @@
 package be.bendem.OreBroadcast;
 
-import be.bendem.chatformatter.ChatFormatter;
-
 import org.bukkit.block.Block;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
