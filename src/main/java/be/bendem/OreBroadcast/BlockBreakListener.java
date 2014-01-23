@@ -81,9 +81,9 @@ public class BlockBreakListener implements Listener {
         for (i = -1; i < 2; ++i) {
             for (j = -1; j < 2; ++j) {
                 for (k = -1; k < 2; ++k) {
-                    if(vein.contains(block.getRelative(i, j, k))       // block already found
-                       || !compare(block, block.getRelative(i, j, k))  // block has not the same type
-                       || (i == 0 && j == 0 && k == 0)) {              // comparing block to itself
+                    if(vein.contains(block.getRelative(i, j, k))           // block already found
+                           || !compare(block, block.getRelative(i, j, k))  // block has not the same type
+                           || (i == 0 && j == 0 && k == 0)) {              // comparing block to itself
                         // Recursion end!
                         continue;
                     }
@@ -120,8 +120,7 @@ public class BlockBreakListener implements Listener {
 
     private final String translateOre(String ore, String color) {
         return "&" + ChatColor.valueOf(color).getChar()
-            + plugin.getConfig().getString("ore-translations." + ore, ore)
-            + "&" + ChatColor.RESET.getChar();
+            + plugin.getConfig().getString("ore-translations." + ore, ore);
     }
 
     private final String colorize(String msg) {
