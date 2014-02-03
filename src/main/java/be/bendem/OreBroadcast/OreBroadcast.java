@@ -28,7 +28,7 @@ public class OreBroadcast extends JavaPlugin {
         pdfFile = getDescription();
 
         saveDefaultConfig();
-        loadBlockToBroadcastList();
+        loadBlocksToBroadcastList();
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         getCommand("ob").setExecutor(new CommandHandler(this));
@@ -40,7 +40,7 @@ public class OreBroadcast extends JavaPlugin {
         logger.fine(pdfFile.getName() + " want you to have a nice day ;-)");
     }
 
-    private void loadBlockToBroadcastList() {
+    public void loadBlocksToBroadcastList() {
         // Create the list of blocks to broadcast from the file
         blocksToBroadcast = new ArrayList<String>(getConfig().getStringList("ores"));
         for (int i = 0; i < blocksToBroadcast.size(); ++i) {

@@ -17,6 +17,7 @@ public class CommandHandler implements CommandExecutor {
                 && args[0].equalsIgnoreCase("reload")
                 && sender.hasPermission("ob.reload")) {
             plugin.reloadConfig();
+            plugin.loadBlocksToBroadcastList();
             sender.sendMessage("Config reloaded...");
             return true;
         }
