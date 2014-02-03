@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class BlockBreakListener implements Listener {
@@ -29,28 +28,21 @@ public class BlockBreakListener implements Listener {
         }
 
         Block block = event.getBlock();
-        // Don't broadcast the blocks which has already been broadcasted!
-        if(plugin.alreadyBroadcastedBlocks.contains(block)) {
+        // Don't broadcast the blocks which has already been broadcasted
+        // or which have been placed by a player
+        if(plugin.broadcastBlacklist.contains(block)) {
+            plugin.broadcastBlacklist.remove(block);
+            plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
             return;
         }
 
         // Measuring event time
         long timer = System.currentTimeMillis();
 
-        // Create the list of blocks to broadcast from the file
-        ArrayList<String> blocksToBroadcast = new ArrayList<String>(plugin.getConfig().getStringList("ores"));
-        for (int i = 0; i < blocksToBroadcast.size(); ++i) {
-            blocksToBroadcast.set(i, blocksToBroadcast.get(i).toUpperCase() + "_ORE");
-            // Handle glowing redstone ore (id 74) and redstone ore (id 73)
-            if(blocksToBroadcast.get(i).equals("REDSTONE_ORE")) {
-                blocksToBroadcast.add("GLOWING_REDSTONE");
-            }
-        }
-
         String blockName = (block.getType() == Material.GLOWING_REDSTONE_ORE ? "redstone" :
             block.getType().name().toLowerCase().replace("_ore", ""));
 
-        if(blocksToBroadcast.contains(block.getType().name())) {
+        if(plugin.blocksToBroadcast.contains(block.getType().name())) {
             int veinSize = getVeinSize(block);
             String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
 
@@ -64,6 +56,7 @@ public class BlockBreakListener implements Listener {
             ));
         }
 
+        plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
         plugin.logger.finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
     }
 
@@ -71,7 +64,8 @@ public class BlockBreakListener implements Listener {
         HashSet<Block> vein = new HashSet<Block>();
         vein.add(block);
         vein = getVein(block, vein);
-        plugin.alreadyBroadcastedBlocks.addAll(vein);
+        plugin.broadcastBlacklist.addAll(vein);
+        plugin.broadcastBlacklist.remove(block);
 
         return vein.size();
     }
