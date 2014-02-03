@@ -1,6 +1,6 @@
 # OreBroadcast
 
-![Preview](img/logo-ore-broadcast.jpg)
+![Preview](img/logo-ore-broadcast.png)
 
 ## English
 
