@@ -8,3 +8,4 @@ target/
 
 *.bat
 build_log.txt
+*.ai
