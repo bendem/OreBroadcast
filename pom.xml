@@ -14,6 +14,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <developers>
+        <developer>
+            <id>bendem</id>
+            <name>Ben "bendem" Dem</name>
+            <email>online@bendem.be</email>
+            <url>http://bendem.be/</url>
+            <roles>
+                <role>Git Master</role>
+                <role>Maven Master</role>
+                <role>Main contributor</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
     <repositories>
         <repository>
             <id>bukkit-repo</id>
@@ -27,11 +42,13 @@
             <artifactId>bukkit</artifactId>
             <version>1.7.2-R0.2</version>
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
+        <defaultGoal>clean package</defaultGoal>
         <resources>
             <resource>
                 <directory>src/main/ressources</directory>
@@ -42,10 +59,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>3.1</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
         </plugins>
