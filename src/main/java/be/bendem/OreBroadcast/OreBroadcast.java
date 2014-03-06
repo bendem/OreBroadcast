@@ -19,7 +19,7 @@ public class OreBroadcast extends JavaPlugin {
     public Logger logger;
     // As it's currently stored, blocks which have already been broadcasted
     // will be again after a server restart / reload.
-    public HashSet<Block> broadcastBlacklist = new HashSet<Block>();
+    public HashSet<Block> broadcastBlacklist = new HashSet<>();
     public ArrayList<String> blocksToBroadcast;
 
     @Override
@@ -42,7 +42,7 @@ public class OreBroadcast extends JavaPlugin {
 
     public void loadBlocksToBroadcastList() {
         // Create the list of blocks to broadcast from the file
-        blocksToBroadcast = new ArrayList<String>(getConfig().getStringList("ores"));
+        blocksToBroadcast = new ArrayList<>(getConfig().getStringList("ores"));
         for (int i = 0; i < blocksToBroadcast.size(); ++i) {
             blocksToBroadcast.set(i, blocksToBroadcast.get(i).toUpperCase() + "_ORE");
             // Handle glowing redstone ore (id 74) and redstone ore (id 73)
