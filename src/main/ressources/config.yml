@@ -21,11 +21,12 @@ colors:
     diamond: aqua
     emerald: green
 
-# The message to be broadcasted (you can use the tags {player}, {count}, {plural} and {ore})
+# The message to be broadcasted (you can use the tags {player_name}, {real_player_name}, {count}, {plural} and {ore})
 # You can use colors by using &colorcode
 # Note that the {ore} will be replaced by &colorcode{ore}&reset
+# Note also that "player_name" is name of the player has it is set by different plugins, "real_player_name" is the pseudo of the player
 # See the end of the file for a list of available color codes
-message: "&l{player}&r just found &l{count}&r block{plural} of [&l&k{ore}&r]"
+message: "&l{player_name}&r just found &l{count}&r block{plural} of [&l&k{ore}&r]"
 # The text to add when more than one ore is found
 # (Will be used by the tag {plural})
 plural: s
@@ -43,25 +44,14 @@ ore-translations:
 
 # Colors and color codes available :
 # Use the colors for the ore list and the color codes for the message
-#   black : 0
-#   dark_blue : 1
-#   dark_green : 2
-#   dark_aqua : 3
-#   dark_red : 4
-#   dark_purple : 5
-#   gold : 6
-#   gray : 7
-#   dark_gray : 8
-#   blue : 9
-#   green : a
-#   aqua : b
-#   red : c
-#   light_purple : d
-#   yellow : e
-#   white : f
-#   magic : k
-#   bold : l
-#   strikethrough : m
-#   underline : n
-#   italic : o
-#   reset : r
+#   black : 0           |     dark_blue : 1
+#   dark_green : 2      |     dark_aqua : 3
+#   dark_red : 4        |     dark_purple : 5
+#   gold : 6            |     gray : 7
+#   dark_gray : 8       |     blue : 9
+#   green : a           |     aqua : b
+#   red : c             |     light_purple : d
+#   yellow : e          |     white : f
+#   magic : k           |     bold : l
+#   strikethrough : m   |     underline : n
+#   italic : o          |     reset : r

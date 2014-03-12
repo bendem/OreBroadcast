@@ -48,7 +48,7 @@ public class BlockBreakListener implements Listener {
 
             broadcast(format(
                 plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
-                event.getPlayer().getDisplayName(),
+                event.getPlayer(),
                 Integer.toString(veinSize),
                 blockName,
                 color,
@@ -104,9 +104,12 @@ public class BlockBreakListener implements Listener {
         }
     }
 
-    private final String format(String msg, String player, String count, String ore, String color, boolean plural) {
+    private final String format(String msg, Player player, String count, String ore, String color, boolean plural) {
         return colorize(msg
-            .replace("{player}", player)
+            // DEPRECATED Use player_name instead
+            .replace("{player}", player.getDisplayName())
+            .replace("{player_name}", player.getDisplayName())
+            .replace("{real_player_name}", player.getName())
             .replace("{count}",  count)
             .replace("{ore}",    translateOre(ore, color))
             .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : ""));
