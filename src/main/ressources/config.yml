@@ -21,9 +21,9 @@ colors:
     diamond: aqua
     emerald: green
 
-# The message to be broadcasted (you can use the tags {player_name}, {real_player_name}, {count}, {plural} and {ore})
+# The message to be broadcasted (you can use the tags {player_name}, {real_player_name}, {count}, {plural}, {ore} and {ore_color})
 # You can use colors by using &colorcode
-# Note that the {ore} will be replaced by &colorcode{ore}&reset
+# Note that the {ore} will be replaced by {ore_color}{ore}
 # Note also that "player_name" is name of the player has it is set by different plugins, "real_player_name" is the pseudo of the player
 # See the end of the file for a list of available color codes
 message: "&l{player_name}&r just found &l{count}&r block{plural} of [&l&k{ore}&r]"

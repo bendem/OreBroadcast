@@ -110,8 +110,9 @@ public class BlockBreakListener implements Listener {
             .replace("{player}", player.getDisplayName())
             .replace("{player_name}", player.getDisplayName())
             .replace("{real_player_name}", player.getName())
-            .replace("{count}",  count)
-            .replace("{ore}",    translateOre(ore, color))
+            .replace("{count}", count)
+            .replace("{ore}", translateOre(ore, color))
+            .replace("{ore_color}", "&" + ChatColor.valueOf(color).getChar())
             .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : ""));
     }
 
