@@ -45,15 +45,16 @@ public class BlockBreakListener implements Listener {
         if(plugin.blocksToBroadcast.contains(block.getType().name())) {
             int veinSize = getVeinSize(block);
             String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
-
-            broadcast(format(
+            String formattedMessage = format(
                 plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
                 event.getPlayer(),
                 Integer.toString(veinSize),
                 blockName,
                 color,
                 veinSize > 1
-            ));
+            );
+            broadcast(formattedMessage);
+            plugin.getServer().getPluginManager().callEvent(new OreBroadcastEvent(formattedMessage, event.getPlayer()));
         }
 
         plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
