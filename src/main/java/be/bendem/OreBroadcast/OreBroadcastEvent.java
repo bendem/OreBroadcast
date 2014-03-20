@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Broadcast event for oraBroadcast.
+ * Broadcast event for OreBroadcast messages.
  *
  * @author cnaude
  */
