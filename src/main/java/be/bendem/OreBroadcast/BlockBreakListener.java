@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class BlockBreakListener implements Listener {
 
@@ -45,15 +46,15 @@ public class BlockBreakListener implements Listener {
         if(plugin.blocksToBroadcast.contains(block.getType().name())) {
             int veinSize = getVeinSize(block);
             String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
-
-            broadcast(format(
+            String formattedMessage = format(
                 plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
                 event.getPlayer(),
                 Integer.toString(veinSize),
                 blockName,
                 color,
                 veinSize > 1
-            ));
+            );
+            broadcast(event.getPlayer(), formattedMessage);            
         }
 
         plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
@@ -96,10 +97,18 @@ public class BlockBreakListener implements Listener {
             || block1.getType() == Material.REDSTONE_ORE && block2.getType() == Material.GLOWING_REDSTONE_ORE;
     }
 
-    private void broadcast(String message) {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+    private void broadcast(Player player, String message) {
+        Set<Player> recipients = new HashSet<>();
+        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
             if(player.hasPermission("ob.receive")) {
-                player.sendMessage(message);
+                recipients.add(onlinePlayer);
+            }
+        }
+        OreBroadcastEvent event = new OreBroadcastEvent(message, player, recipients);
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            for (Player recipient : event.getRecipients()) {
+                recipient.sendMessage(event.getMessage());
             }
         }
     }
