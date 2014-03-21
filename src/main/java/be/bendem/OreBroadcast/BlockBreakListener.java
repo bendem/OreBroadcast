@@ -1,5 +1,6 @@
 package be.bendem.OreBroadcast;
 
+import java.util.Collection;
 import org.bukkit.block.Block;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class BlockBreakListener implements Listener {
 
@@ -53,8 +55,7 @@ public class BlockBreakListener implements Listener {
                 color,
                 veinSize > 1
             );
-            broadcast(formattedMessage);
-            plugin.getServer().getPluginManager().callEvent(new OreBroadcastEvent(formattedMessage, event.getPlayer()));
+            broadcast(event.getPlayer(),formattedMessage);            
         }
 
         plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
@@ -97,10 +98,18 @@ public class BlockBreakListener implements Listener {
             || block1.getType() == Material.REDSTONE_ORE && block2.getType() == Material.GLOWING_REDSTONE_ORE;
     }
 
-    private void broadcast(String message) {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+    private void broadcast(Player player, String message) {
+        Set<Player> recipients = new HashSet<>();
+        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
             if(player.hasPermission("ob.receive")) {
-                player.sendMessage(message);
+                recipients.add(onlinePlayer);
+            }
+        }
+        OreBroadcastEvent event = new OreBroadcastEvent(message, player, recipients);
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            for (Player recipient : event.getRecipients()) {
+                recipient.sendMessage(event.getMessage());
             }
         }
     }
