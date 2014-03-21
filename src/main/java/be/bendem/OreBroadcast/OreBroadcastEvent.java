@@ -17,10 +17,11 @@ public class OreBroadcastEvent extends Event implements Cancellable {
 
     private String message;
     private Player player;
-    private boolean cancel = false;
+    private boolean cancelled = false;
     private Set<Player> recipients;
 
     /**
+     * Broadcast event for OreBroadcast messages.
      *
      * @param message the formatted message
      * @param player the player that triggered the event
@@ -34,16 +35,16 @@ public class OreBroadcastEvent extends Event implements Cancellable {
 
     /**
      * Gets a set of recipients that this message will be displayed to
-     *     
+     *
      * @return the players that receive this message
      */
     public Set<Player> getRecipients() {
         return recipients;
     }
-    
+
     /**
      * Sets of recipients that this message will be displayed to
-     *     
+     *
      * @param recipients the players that receive this message
      */
     public void setRecipients(Set<Player> recipients) {
@@ -51,7 +52,7 @@ public class OreBroadcastEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the formatted message.
+     * Gets the formatted message.
      *
      * @return
      */
@@ -60,7 +61,7 @@ public class OreBroadcastEvent extends Event implements Cancellable {
     }
 
     /**
-     * Set the message.
+     * Sets the message.
      *
      * @param message
      */
@@ -69,7 +70,7 @@ public class OreBroadcastEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the player.
+     * Gets the player.
      *
      * @return
      */
@@ -78,7 +79,7 @@ public class OreBroadcastEvent extends Event implements Cancellable {
     }
 
     /**
-     * Set the player.
+     * Sets the player.
      *
      * @param player
      */
@@ -86,30 +87,23 @@ public class OreBroadcastEvent extends Event implements Cancellable {
         this.player = player;
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
 
-    /**
-     *
-     * @return
-     */
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
     @Override
     public boolean isCancelled() {
-        return cancel;
+        return cancelled;
     }
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancel = cancel;
+        this.cancelled = cancel;
     }
+    
 }

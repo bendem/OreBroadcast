@@ -1,6 +1,5 @@
 package be.bendem.OreBroadcast;
 
-import java.util.Collection;
 import org.bukkit.block.Block;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -55,7 +54,7 @@ public class BlockBreakListener implements Listener {
                 color,
                 veinSize > 1
             );
-            broadcast(event.getPlayer(),formattedMessage);            
+            broadcast(event.getPlayer(), formattedMessage);            
         }
 
         plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
