@@ -54,7 +54,7 @@ public class BlockBreakListener implements Listener {
                 color,
                 veinSize > 1
             );
-            broadcast(event.getPlayer(), formattedMessage);            
+            broadcast(event.getPlayer(), formattedMessage);
         }
 
         plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
@@ -62,7 +62,7 @@ public class BlockBreakListener implements Listener {
     }
 
     private final int getVeinSize(Block block) {
-        HashSet<Block> vein = new HashSet<Block>();
+        HashSet<Block> vein = new HashSet<>();
         vein.add(block);
         vein = getVein(block, vein);
         plugin.broadcastBlacklist.addAll(vein);

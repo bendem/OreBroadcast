@@ -105,5 +105,5 @@ public class OreBroadcastEvent extends Event implements Cancellable {
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
-    
+
 }
