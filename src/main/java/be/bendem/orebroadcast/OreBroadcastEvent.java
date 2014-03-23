@@ -1,4 +1,4 @@
-package be.bendem.OreBroadcast;
+package be.bendem.orebroadcast;
 
 import java.util.Set;
 import org.bukkit.entity.Player;

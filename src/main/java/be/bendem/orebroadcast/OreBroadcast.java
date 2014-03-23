@@ -1,4 +1,4 @@
-package be.bendem.OreBroadcast;
+package be.bendem.orebroadcast;
 
 import org.bukkit.block.Block;
 import org.bukkit.plugin.PluginDescriptionFile;
