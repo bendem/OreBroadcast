@@ -9,7 +9,7 @@ commands:
         usage: |
             /<ob> [reload] Reload config from file
         description: OreBroadcast commands
-        permission: ob
+        permission: ob.reload
 
 permissions:
     ob.*:
