@@ -62,7 +62,7 @@ public class BlockBreakListener implements Listener {
     }
 
     private final int getVeinSize(Block block) {
-        HashSet<Block> vein = new HashSet<>();
+        Set<Block> vein = new HashSet<>();
         vein.add(block);
         vein = getVein(block, vein);
         plugin.broadcastBlacklist.addAll(vein);
@@ -71,7 +71,7 @@ public class BlockBreakListener implements Listener {
         return vein.size();
     }
 
-    private final HashSet<Block> getVein(Block block, HashSet<Block> vein) {
+    private final Set<Block> getVein(Block block, Set<Block> vein) {
         int i, j, k;
         for (i = -1; i < 2; ++i) {
             for (j = -1; j < 2; ++j) {

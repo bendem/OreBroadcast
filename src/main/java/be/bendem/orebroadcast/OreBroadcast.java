@@ -6,6 +6,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -19,8 +21,8 @@ public class OreBroadcast extends JavaPlugin {
     public Logger logger;
     // As it's currently stored, blocks which have already been broadcasted
     // will be again after a server restart / reload.
-    public HashSet<Block> broadcastBlacklist = new HashSet<>();
-    public ArrayList<String> blocksToBroadcast;
+    public Set<Block> broadcastBlacklist = new HashSet<>();
+    public List<String> blocksToBroadcast;
 
     @Override
     public void onEnable() {
