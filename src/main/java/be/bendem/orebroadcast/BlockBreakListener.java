@@ -22,56 +22,61 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        // Reject creative users and users without ob.broadcast permission
-        if(event.getPlayer().getGameMode() != GameMode.SURVIVAL
-                || !event.getPlayer().hasPermission("ob.broadcast")) {
+        Player player = event.getPlayer();
+        // Reject creative users, users without ob.broadcast permission
+        // and user in a non whitelisted world
+        if(player.getGameMode() != GameMode.SURVIVAL
+                || !player.hasPermission("ob.broadcast")
+                || !plugin.isWorldWhitelisted(player.getWorld().getName())) {
             return;
         }
 
         Block block = event.getBlock();
         // Don't broadcast the blocks which has already been broadcasted
         // or which have been placed by a player
-        if(plugin.broadcastBlacklist.contains(block)) {
-            plugin.broadcastBlacklist.remove(block);
-            plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
+        if(plugin.isBlackListed(block)) {
+            plugin.unBlackList(block);
             return;
         }
 
         // Measuring event time
         long timer = System.currentTimeMillis();
 
-        String blockName = (block.getType() == Material.GLOWING_REDSTONE_ORE ? "redstone" :
-            block.getType().name().toLowerCase().replace("_ore", ""));
+        if(plugin.isWhitelisted(block.getType())) {
+            String blockName;
+            if(block.getType() == Material.GLOWING_REDSTONE_ORE) {
+                blockName = "redstone";
+            } else {
+                blockName = block.getType().name().toLowerCase().replace("_ore", "");
+            }
 
-        if(plugin.blocksToBroadcast.contains(block.getType().name())) {
             int veinSize = getVeinSize(block);
             String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
             String formattedMessage = format(
                 plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
-                event.getPlayer(),
-                Integer.toString(veinSize),
+                player,
+                String.valueOf(veinSize),
                 blockName,
                 color,
                 veinSize > 1
             );
-            broadcast(event.getPlayer(), formattedMessage);
+            broadcast(player, formattedMessage);
         }
 
-        plugin.logger.finer("Block in blackList : " + plugin.broadcastBlacklist.size());
-        plugin.logger.finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
+        plugin.getLogger().finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
     }
 
-    private final int getVeinSize(Block block) {
+    private int getVeinSize(Block block) {
         Set<Block> vein = new HashSet<>();
         vein.add(block);
         vein = getVein(block, vein);
-        plugin.broadcastBlacklist.addAll(vein);
-        plugin.broadcastBlacklist.remove(block);
+        plugin.blackList(vein);
+        plugin.unBlackList(block);
 
         return vein.size();
     }
 
-    private final Set<Block> getVein(Block block, Set<Block> vein) {
+    private Set<Block> getVein(Block block, Set<Block> vein) {
         int i, j, k;
         for (i = -1; i < 2; ++i) {
             for (j = -1; j < 2; ++j) {
@@ -113,24 +118,23 @@ public class BlockBreakListener implements Listener {
         }
     }
 
-    private final String format(String msg, Player player, String count, String ore, String color, boolean plural) {
+    private String format(String msg, Player player, String count, String ore, String color, boolean plural) {
         return colorize(msg
-            // DEPRECATED Use player_name instead
-            .replace("{player}", player.getDisplayName())
             .replace("{player_name}", player.getDisplayName())
             .replace("{real_player_name}", player.getName())
+            .replace("{world}", player.getWorld().getName())
             .replace("{count}", count)
             .replace("{ore}", translateOre(ore, color))
             .replace("{ore_color}", "&" + ChatColor.valueOf(color).getChar())
             .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : ""));
     }
 
-    private final String translateOre(String ore, String color) {
+    private String translateOre(String ore, String color) {
         return "&" + ChatColor.valueOf(color).getChar()
             + plugin.getConfig().getString("ore-translations." + ore, ore);
     }
 
-    private final String colorize(String msg) {
+    private String colorize(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
 

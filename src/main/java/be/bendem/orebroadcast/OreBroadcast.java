@@ -1,14 +1,14 @@
 package be.bendem.orebroadcast;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * OreBroadcast for Bukkit
@@ -17,40 +17,73 @@ import java.util.logging.Logger;
  */
 public class OreBroadcast extends JavaPlugin {
 
-    public PluginDescriptionFile pdfFile;
-    public Logger logger;
     // As it's currently stored, blocks which have already been broadcasted
     // will be again after a server restart / reload.
-    public Set<Block> broadcastBlacklist = new HashSet<>();
-    public List<String> blocksToBroadcast;
+    private final Set<Block>    broadcastBlacklist = new HashSet<>();
+    private final Set<Material> blocksToBroadcast  = new HashSet<>();
+    private final Set<String>   worldWhitelist     = new HashSet<>();
+    private boolean worldWhitelistActive = false;
 
     @Override
     public void onEnable() {
-        logger = getLogger();
-        pdfFile = getDescription();
+        PluginDescriptionFile description = getDescription();
 
         saveDefaultConfig();
-        loadBlocksToBroadcastList();
+        loadConfig();
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         getCommand("ob").setExecutor(new CommandHandler(this));
-        logger.fine(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+        getLogger().fine(description.getName() + " version " + description.getVersion() + " is enabled!");
     }
 
     @Override
     public void onDisable() {
-        logger.fine(pdfFile.getName() + " want you to have a nice day ;-)");
+        getLogger().fine(getDescription().getName() + " want you to have a nice day ;-)");
     }
 
-    public void loadBlocksToBroadcastList() {
-        // Create the list of blocks to broadcast from the file
-        blocksToBroadcast = new ArrayList<>(getConfig().getStringList("ores"));
-        for (int i = 0; i < blocksToBroadcast.size(); ++i) {
-            blocksToBroadcast.set(i, blocksToBroadcast.get(i).toUpperCase() + "_ORE");
+    public void blackList(Block block) {
+        broadcastBlacklist.add(block);
+    }
+
+    public void blackList(Collection<Block> blocks) {
+        broadcastBlacklist.addAll(blocks);
+    }
+
+    public void unBlackList(Block block) {
+        broadcastBlacklist.remove(block);
+    }
+
+    public boolean isBlackListed(Block block) {
+        return broadcastBlacklist.contains(block);
+    }
+
+    public boolean isWhitelisted(Material material) {
+        return blocksToBroadcast.contains(material);
+    }
+
+    public boolean isWorldWhitelisted(String world) {
+        return !worldWhitelistActive || worldWhitelist.contains(world);
+    }
+
+    public void loadConfig() {
+        // Create the list of materials to broadcast from the file
+        List<String> configList = getConfig().getStringList("ores");
+        blocksToBroadcast.clear();
+
+        for (String item : configList) {
+            Material material = Material.getMaterial(item.toUpperCase() + "_ORE");
+            blocksToBroadcast.add(material);
             // Handle glowing redstone ore (id 74) and redstone ore (id 73)
-            if(blocksToBroadcast.get(i).equals("REDSTONE_ORE")) {
-                blocksToBroadcast.add("GLOWING_REDSTONE");
+            if (material.equals(Material.REDSTONE_ORE)) {
+                blocksToBroadcast.add(Material.GLOWING_REDSTONE_ORE);
             }
+        }
+
+        // Load worlds
+        worldWhitelist.clear();
+        worldWhitelistActive = getConfig().getBoolean("active-per-worlds", true);
+        if(worldWhitelistActive) {
+            worldWhitelist.addAll(getConfig().getStringList("active-worlds"));
         }
     }
 

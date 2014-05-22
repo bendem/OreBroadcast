@@ -21,7 +21,8 @@ colors:
     diamond: aqua
     emerald: green
 
-# The message to be broadcasted (you can use the tags {player_name}, {real_player_name}, {count}, {plural}, {ore} and {ore_color})
+# The message to be broadcasted (you can use the tags {player_name}, {real_player_name}, {count}, {plural},
+# {ore}, {ore_color} and {world})
 # You can use colors by using &colorcode
 # Note that the {ore} will be replaced by {ore_color}{ore}
 # Note also that "player_name" is name of the player has it is set by different plugins, "real_player_name" is the pseudo of the player
@@ -41,6 +42,15 @@ ore-translations:
     quartz: quartz
     diamond: diamond
     emerald: emerald
+
+# Set this to true to only activate OreBroadcast in listed worlds
+active-per-worlds: false
+
+# List of worlds where OreBroadcast is active
+# This has no effects if active-per-world is set to false!
+#active-worlds:
+#    - world
+#    - world_nether
 
 # Colors and color codes available :
 # Use the colors for the ore list and the color codes for the message

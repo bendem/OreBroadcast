@@ -16,9 +16,10 @@ public class BlockPlaceListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Block block = event.getBlock();
-        if(plugin.blocksToBroadcast.contains(block.getType().name())
-                && !plugin.broadcastBlacklist.contains(block)) {
-            plugin.broadcastBlacklist.add(block);
+        if(plugin.isWhitelisted(block.getType())
+                && plugin.isWorldWhitelisted(block.getWorld().getName())
+                && !plugin.isBlackListed(block)) {
+            plugin.blackList(block);
         }
     }
 
