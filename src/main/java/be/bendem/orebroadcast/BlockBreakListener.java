@@ -105,7 +105,7 @@ public class BlockBreakListener implements Listener {
     private void broadcast(Player player, String message) {
         Set<Player> recipients = new HashSet<>();
         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-            if(player.hasPermission("ob.receive")) {
+            if(onlinePlayer.hasPermission("ob.receive")) {
                 recipients.add(onlinePlayer);
             }
         }
