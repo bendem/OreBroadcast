@@ -26,19 +26,11 @@ public class OreBroadcast extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PluginDescriptionFile description = getDescription();
-
         saveDefaultConfig();
         loadConfig();
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         getCommand("ob").setExecutor(new CommandHandler(this));
-        getLogger().fine(description.getName() + " version " + description.getVersion() + " is enabled!");
-    }
-
-    @Override
-    public void onDisable() {
-        getLogger().fine(getDescription().getName() + " want you to have a nice day ;-)");
     }
 
     public void blackList(Block block) {
