@@ -21,18 +21,19 @@ colors:
     diamond: aqua
     emerald: green
 
-# The message to be broadcasted (you can use the tags {player_name}, {real_player_name}, {count}, {plural},
-# {ore}, {ore_color} and {world})
-# You can use colors by using &colorcode
-# Note that the {ore} will be replaced by {ore_color}{ore}
-# Note also that "player_name" is name of the player has it is set by different plugins, "real_player_name" is the pseudo of the player
-# See the end of the file for a list of available color codes
+# The message to be broadcasted (you can use the tags {player_name}, {real_player_name},
+# {count}, {plural}, {ore}, {ore_color} and {world}).
+# Notes:
+# + You can use colors by using &colorcode (See the end of the file for a list of available color codes).
+# + The {ore} tag will be replaced by {ore_color}{ore}.
+# + The "player_name" tag is the name of the player as it is set by different plugins,
+#   "real_player_name" is the real pseudo of the player.
 message: "&l{player_name}&r just found &l{count}&r block{plural} of [&l&k{ore}&r]"
-# The text to add when more than one ore is found
-# (Will be used by the tag {plural})
+
+# The text to add when more than one ore is found (Will be used to replace the {plural} tag).
 plural: s
 
-# The ore translation to use in the message
+# The ore translations to use in the messages
 ore-translations:
     coal: coal
     iron: iron
@@ -47,7 +48,7 @@ ore-translations:
 active-per-worlds: false
 
 # List of worlds where OreBroadcast is active
-# This has no effects if active-per-world is set to false!
+# This has no effect if `active-per-world` is set to false!
 #active-worlds:
 #    - world
 #    - world_nether
