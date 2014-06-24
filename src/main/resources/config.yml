@@ -33,7 +33,7 @@ message: "&l{player_name}&r just found &l{count}&r block{plural} of [&l&k{ore}&r
 # The text to add when more than one ore is found (Will be used to replace the {plural} tag).
 plural: s
 
-# The ore translations to use in the messages
+# The ore translations to use in the messages.
 ore-translations:
     coal: coal
     iron: iron
@@ -44,10 +44,10 @@ ore-translations:
     diamond: diamond
     emerald: emerald
 
-# Set this to true to only activate OreBroadcast in listed worlds
+# Set this to true to only activate OreBroadcast in listed worlds.
 active-per-worlds: false
 
-# List of worlds where OreBroadcast is active
+# List of worlds where OreBroadcast is active.
 # This has no effect if `active-per-world` is set to false!
 #active-worlds:
 #    - world
@@ -56,6 +56,9 @@ active-per-worlds: false
 # Max size of a vein. If the size is greater, the vein is ignored, preventing server from freezing
 # (i.e. if mining a big structure made of a block to broadcast).
 max-vein-size: 500
+
+# Block placed in creative will be broadcasted when a player not in creative break them.
+broadcast-creative-placed-blocks: true
 
 # Colors and color codes available :
 # Use the colors for the ore list and the color codes for the message
