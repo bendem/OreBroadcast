@@ -2,6 +2,7 @@ package be.bendem.orebroadcast;
 
 import org.bukkit.block.Block;
 import org.bukkit.ChatColor;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.EventHandler;
@@ -9,10 +10,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
 public class BlockBreakListener implements Listener {
+
+    private static final Set<BlockFace> BLOCK_FACES = EnumSet.range(BlockFace.NORTH, BlockFace.WEST_SOUTH_WEST);
 
     public OreBroadcast plugin;
 
@@ -23,8 +27,10 @@ public class BlockBreakListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        // Reject creative users, users without ob.broadcast permission
-        // and user in a non whitelisted world
+        // Reject
+        // + creative users
+        // + users without ob.broadcast permission
+        // + users in a non whitelisted world
         if(player.getGameMode() != GameMode.SURVIVAL
                 || !player.hasPermission("ob.broadcast")
                 || !plugin.isWorldWhitelisted(player.getWorld().getName())) {
@@ -51,6 +57,10 @@ public class BlockBreakListener implements Listener {
             }
 
             int veinSize = getVeinSize(block);
+            if(veinSize < 1) {
+                plugin.getLogger().fine("Vein ignored");
+                return;
+            }
             String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
             String formattedMessage = format(
                 plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
@@ -69,31 +79,26 @@ public class BlockBreakListener implements Listener {
     private int getVeinSize(Block block) {
         Set<Block> vein = new HashSet<>();
         vein.add(block);
-        vein = getVein(block, vein);
+        try {
+            getVein(block, vein);
+        } catch(OreBroadcastException e) {
+            return 0;
+        }
         plugin.blackList(vein);
         plugin.unBlackList(block);
-
         return vein.size();
     }
 
-    private Set<Block> getVein(Block block, Set<Block> vein) {
-        int i, j, k;
-        for (i = -1; i < 2; ++i) {
-            for (j = -1; j < 2; ++j) {
-                for (k = -1; k < 2; ++k) {
-                    if(vein.contains(block.getRelative(i, j, k))           // block already found
-                           || !compare(block, block.getRelative(i, j, k))  // block has not the same type
-                           || (i == 0 && j == 0 && k == 0)) {              // comparing block to itself
-                        // Recursion end!
-                        continue;
-                    }
-                    vein.add(block.getRelative(i, j, k));
-                    vein = getVein(block.getRelative(i, j, k), vein);
-                }
+    private void getVein(Block block, Set<Block> vein) throws OreBroadcastException {
+        if(vein.size() > plugin.getConfig().getInt("max-vein-size", 500)) {
+            throw new OreBroadcastException();
+        }
+        for(BlockFace blockFace : BLOCK_FACES) {
+            Block relative = block.getRelative(blockFace);
+            if(!vein.contains(relative) && compare(block, relative)) {
+                vein.add(relative);
             }
         }
-
-        return vein;
     }
 
     private boolean compare(Block block1, Block block2) {

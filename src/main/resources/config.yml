@@ -52,6 +52,10 @@ active-per-worlds: false
 #    - world
 #    - world_nether
 
+# Max size of a vein. If the size is greater, the vein is ignored, preventing server from freezing
+# (i.e. if mining a big structure made of a block to broadcast).
+max-vein-size: 500
+
 # Colors and color codes available :
 # Use the colors for the ore list and the color codes for the message
 #   black : 0           |     dark_blue : 1
