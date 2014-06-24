@@ -97,6 +97,7 @@ public class BlockBreakListener implements Listener {
             Block relative = block.getRelative(blockFace);
             if(!vein.contains(relative) && compare(block, relative)) {
                 vein.add(relative);
+                getVein(relative, vein);
             }
         }
     }
