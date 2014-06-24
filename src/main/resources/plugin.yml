@@ -2,7 +2,8 @@ name: ${pom.name}
 main: ${pom.groupId}.${pom.name}
 version: ${pom.version}
 author: bendem
-description: Broadcast the server when you find ores.
+description: Send messages to other players when you find ores.
+website: ${pom.url}
 
 commands:
     ob:
@@ -13,17 +14,17 @@ commands:
 
 permissions:
     ob.*:
-        description: Give access to all OreBroadcast commands
+        description: Give access to all OreBroadcast functionalities
         children:
             ob.reload: true
             ob.broadcast: true
             ob.receive: true
     ob.reload:
-        description: Reload config from file
+        description: Players with this permission can reload the config
         default: op
     ob.broadcast:
-        description: Broadcast a message when ore is found
+        description: Players with this permission will send messages when they find ores.
         default: true
     ob.receive:
-        description: Receive a broadcasted message
+        description: Players with this permission will receive OreBroadcast messages.
         default: true
