@@ -16,8 +16,6 @@ import java.util.Set;
 
 public class BlockBreakListener implements Listener {
 
-    private static final Set<BlockFace> BLOCK_FACES = EnumSet.range(BlockFace.NORTH, BlockFace.WEST_SOUTH_WEST);
-
     public OreBroadcast plugin;
 
     BlockBreakListener(OreBroadcast plugin) {
@@ -93,16 +91,25 @@ public class BlockBreakListener implements Listener {
         if(vein.size() > plugin.getConfig().getInt("max-vein-size", 500)) {
             throw new OreBroadcastException();
         }
-        for(BlockFace blockFace : BLOCK_FACES) {
-            Block relative = block.getRelative(blockFace);
-            if(!vein.contains(relative) && compare(block, relative)) {
-                vein.add(relative);
-                getVein(relative, vein);
+
+        int i, j, k;
+        for (i = -1; i < 2; ++i) {
+            for(j = -1; j < 2; ++j) {
+                for(k = -1; k < 2; ++k) {
+                    Block relative = block.getRelative(i, j, k);
+                    if(!vein.contains(relative)                  // block already found
+                            && equals(block, relative)           // block has not the same type
+                            && ((i != 0 || j != 0 || k != 0))) { // comparing block to itself
+                        vein.add(relative);
+                        getVein(relative, vein);
+                    }
+                }
             }
         }
     }
 
-    private boolean compare(Block block1, Block block2) {
+    // Workaround for redstone ores
+    private boolean equals(Block block1, Block block2) {
         return block1.getType().equals(block2.getType())
             || block1.getType() == Material.GLOWING_REDSTONE_ORE && block2.getType() == Material.REDSTONE_ORE
             || block1.getType() == Material.REDSTONE_ORE && block2.getType() == Material.GLOWING_REDSTONE_ORE;
