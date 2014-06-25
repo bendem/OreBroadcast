@@ -8,19 +8,29 @@ website: ${pom.url}
 commands:
     ob:
         usage: |
+            Commands available:
             /<ob> [reload] Reload config from file
+            /<ob> [clear] Clear the content of the block blacklist
         description: OreBroadcast commands
-        permission: ob.reload
+        permission: ob.commands.*
 
 permissions:
     ob.*:
         description: Give access to all OreBroadcast functionalities
         children:
-            ob.reload: true
+            ob.commands.*: true
             ob.broadcast: true
             ob.receive: true
-    ob.reload:
+    ob.commands.*:
+        description: Give access to all the plugin commands
+        children:
+            ob.commands.reload: true
+            ob.commands.clear: true
+    ob.commands.reload:
         description: Players with this permission can reload the config
+        default: op
+    ob.commands.clear:
+        description: Players with this permission can clear the blacklist
         default: op
     ob.broadcast:
         description: Players with this permission will send messages when they find ores.

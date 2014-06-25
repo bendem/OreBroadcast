@@ -1,8 +1,10 @@
 package be.bendem.orebroadcast;
 
+import be.bendem.orebroadcast.commands.Command;
+import be.bendem.orebroadcast.commands.CommandHandler;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
@@ -28,9 +30,31 @@ public class OreBroadcast extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         loadConfig();
+
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
-        getCommand("ob").setExecutor(new CommandHandler(this));
+
+        CommandHandler commandHandler = new CommandHandler(this, "ob");
+        commandHandler.register(
+            new Command("clear", "ob.clear") {
+                @Override
+                public void execute(CommandSender sender, List<String> args) {
+                    int size = clearBlackList();
+                    sender.sendMessage(size + " block" + (size > 1 ? "s" : "")  + " cleared...");
+                }
+            }
+        );
+
+        commandHandler.register(
+            new Command("reload", "ob.reload") {
+                @Override
+                public void execute(CommandSender sender, List<String> args) {
+                    reloadConfig();
+                    loadConfig();
+                    sender.sendMessage("Config reloaded...");
+                }
+            }
+        );
     }
 
     public void blackList(Block block) {
@@ -43,6 +67,12 @@ public class OreBroadcast extends JavaPlugin {
 
     public void unBlackList(Block block) {
         broadcastBlacklist.remove(block);
+    }
+
+    public int clearBlackList() {
+        int size = broadcastBlacklist.size();
+        broadcastBlacklist.clear();
+        return size;
     }
 
     public boolean isBlackListed(Block block) {
@@ -62,11 +92,11 @@ public class OreBroadcast extends JavaPlugin {
         List<String> configList = getConfig().getStringList("ores");
         blocksToBroadcast.clear();
 
-        for (String item : configList) {
+        for(String item : configList) {
             Material material = Material.getMaterial(item.toUpperCase() + "_ORE");
             blocksToBroadcast.add(material);
             // Handle glowing redstone ore (id 74) and redstone ore (id 73)
-            if (material.equals(Material.REDSTONE_ORE)) {
+            if(material.equals(Material.REDSTONE_ORE)) {
                 blocksToBroadcast.add(Material.GLOWING_REDSTONE_ORE);
             }
         }
