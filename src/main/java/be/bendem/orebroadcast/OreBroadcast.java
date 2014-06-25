@@ -35,26 +35,22 @@ public class OreBroadcast extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
 
         CommandHandler commandHandler = new CommandHandler(this, "ob");
-        commandHandler.register(
-            new Command("clear", "ob.clear") {
-                @Override
-                public void execute(CommandSender sender, List<String> args) {
-                    int size = clearBlackList();
-                    sender.sendMessage(size + " block" + (size > 1 ? "s" : "")  + " cleared...");
-                }
+        commandHandler.register(new Command("clear", "ob.clear") {
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                int size = clearBlackList();
+                sender.sendMessage(size + " block" + (size > 1 ? "s" : "")  + " cleared...");
             }
-        );
+        });
 
-        commandHandler.register(
-            new Command("reload", "ob.reload") {
-                @Override
-                public void execute(CommandSender sender, List<String> args) {
-                    reloadConfig();
-                    loadConfig();
-                    sender.sendMessage("Config reloaded...");
-                }
+        commandHandler.register(new Command("reload", "ob.reload") {
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                reloadConfig();
+                loadConfig();
+                sender.sendMessage("Config reloaded...");
             }
-        );
+        });
     }
 
     public void blackList(Block block) {
