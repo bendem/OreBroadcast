@@ -1,24 +1,22 @@
 package be.bendem.orebroadcast;
 
-import org.bukkit.block.Block;
 import org.bukkit.ChatColor;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
 public class BlockBreakListener implements Listener {
 
-    public OreBroadcast plugin;
+    private OreBroadcast plugin;
 
-    BlockBreakListener(OreBroadcast plugin) {
+    public BlockBreakListener(OreBroadcast plugin) {
         this.plugin = plugin;
     }
 
