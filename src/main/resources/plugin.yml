@@ -1,5 +1,5 @@
 name: ${pom.name}
-main: ${pom.groupId}.${pom.name}
+main: be.bendem.bukkit.orebroadcast.OreBroadcast
 version: ${pom.version}
 author: bendem
 description: Send messages to other players when you find ores.

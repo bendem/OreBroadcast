@@ -1,4 +1,4 @@
-package be.bendem.orebroadcast;
+package be.bendem.bukkit.orebroadcast;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;

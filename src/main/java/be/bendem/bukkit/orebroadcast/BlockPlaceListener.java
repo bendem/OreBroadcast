@@ -1,4 +1,4 @@
-package be.bendem.orebroadcast;
+package be.bendem.bukkit.orebroadcast;
 
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;

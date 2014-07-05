@@ -1,7 +1,7 @@
-package be.bendem.orebroadcast;
+package be.bendem.bukkit.orebroadcast;
 
-import be.bendem.orebroadcast.commands.Command;
-import be.bendem.orebroadcast.commands.CommandHandler;
+import be.bendem.bukkit.orebroadcast.commands.Command;
+import be.bendem.bukkit.orebroadcast.commands.CommandHandler;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;

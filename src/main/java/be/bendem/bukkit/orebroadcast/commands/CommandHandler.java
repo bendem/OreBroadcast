@@ -1,4 +1,4 @@
-package be.bendem.orebroadcast.commands;
+package be.bendem.bukkit.orebroadcast.commands;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
