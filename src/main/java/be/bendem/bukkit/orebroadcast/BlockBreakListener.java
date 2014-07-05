@@ -40,49 +40,73 @@ public class BlockBreakListener implements Listener {
             plugin.unBlackList(block);
             return;
         }
+        if(!plugin.isWhitelisted(block.getType())) {
+            return;
+        }
 
         // Measuring event time
         long timer = System.currentTimeMillis();
 
-        if(plugin.isWhitelisted(block.getType())) {
-            String blockName;
-            if(block.getType() == Material.GLOWING_REDSTONE_ORE) {
-                blockName = "redstone";
-            } else {
-                blockName = block.getType().name().toLowerCase().replace("_ore", "");
-            }
-
-            int veinSize = getVeinSize(block);
-            if(veinSize < 1) {
-                plugin.getLogger().fine("Vein ignored");
-                return;
-            }
-            String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
-            String formattedMessage = format(
-                plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
-                player,
-                String.valueOf(veinSize),
-                blockName,
-                color,
-                veinSize > 1
-            );
-            broadcast(player, formattedMessage);
+        Set<Block> vein = getVein(block);
+        if(vein == null || vein.size() < 1) {
+            plugin.getLogger().fine("Vein ignored");
+            return;
         }
+
+        // Get recipients
+        Set<Player> recipients = new HashSet<>();
+        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
+            if(onlinePlayer.hasPermission("ob.receive")) {
+                recipients.add(onlinePlayer);
+            }
+        }
+
+        OreBroadcastEvent e = new OreBroadcastEvent(
+            plugin.getConfig().getString("message", "{player} just found {count} block{plural} of {ore}"),
+            player,
+            block,
+            recipients,
+            vein
+        );
+
+        plugin.getServer().getPluginManager().callEvent(e);
+        if(e.isCancelled() || e.getVein().isEmpty()) {
+            return;
+        }
+
+        plugin.blackList(e.getVein());
+        plugin.unBlackList(e.getBlockMined());
+
+        String blockName;
+        if(e.getBlockMined().getType() == Material.GLOWING_REDSTONE_ORE) {
+            blockName = "redstone";
+        } else {
+            blockName = e.getBlockMined().getType().name().toLowerCase().replace("_ore", "");
+        }
+
+        String color = plugin.getConfig().getString("colors." + blockName, "white").toUpperCase();
+        String formattedMessage = format(
+            e.getFormat(),
+            e.getSource(),
+            e.getVein().size(),
+            blockName,
+            color,
+            e.getVein().size() > 1
+        );
+        broadcast(e.getRecipients(), formattedMessage);
 
         plugin.getLogger().finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
     }
 
-    private int getVeinSize(Block block) {
+    private Set<Block> getVein(Block block) {
         Set<Block> vein = new HashSet<>();
         vein.add(block);
         try {
             getVein(block, vein);
         } catch(OreBroadcastException e) {
-            return 0;
+            return null;
         }
-        plugin.blackList(vein);
-        plugin.unBlackList(block);
-        return vein.size();
+        return vein;
     }
 
     private void getVein(Block block, Set<Block> vein) throws OreBroadcastException {
@@ -113,40 +137,21 @@ public class BlockBreakListener implements Listener {
             || block1.getType() == Material.REDSTONE_ORE && block2.getType() == Material.GLOWING_REDSTONE_ORE;
     }
 
-    private void broadcast(Player player, String message) {
-        Set<Player> recipients = new HashSet<>();
-        for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-            if(onlinePlayer.hasPermission("ob.receive")) {
-                recipients.add(onlinePlayer);
-            }
-        }
-        OreBroadcastEvent event = new OreBroadcastEvent(message, player, recipients);
-        plugin.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            for (Player recipient : event.getRecipients()) {
-                recipient.sendMessage(event.getMessage());
-            }
+    private void broadcast(Set<Player> recipients, String message) {
+        for (Player recipient : recipients) {
+            recipient.sendMessage(message);
         }
     }
 
-    private String format(String msg, Player player, String count, String ore, String color, boolean plural) {
-        return colorize(msg
-            .replace("{player_name}", player.getDisplayName())
-            .replace("{real_player_name}", player.getName())
-            .replace("{world}", player.getWorld().getName())
-            .replace("{count}", count)
-            .replace("{ore}", translateOre(ore, color))
-            .replace("{ore_color}", "&" + ChatColor.valueOf(color).getChar())
-            .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : ""));
+    private String format(String msg, Player player, int count, String ore, String color, boolean plural) {
+        return ChatColor.translateAlternateColorCodes(
+                '&', msg.replace("{player_name}", player.getDisplayName()).replace("{real_player_name}", player.getName()).replace("{world}", player.getWorld().getName()).replace("{count}", String.valueOf(count)).replace("{ore}", translateOre(ore, color)).replace("{ore_color}", "&" + ChatColor.valueOf(color).getChar()).replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : "")
+        );
     }
 
     private String translateOre(String ore, String color) {
         return "&" + ChatColor.valueOf(color).getChar()
             + plugin.getConfig().getString("ore-translations." + ore, ore);
-    }
-
-    private String colorize(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
     }
 
 }

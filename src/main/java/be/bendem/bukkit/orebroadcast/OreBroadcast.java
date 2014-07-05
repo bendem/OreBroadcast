@@ -53,37 +53,78 @@ public class OreBroadcast extends JavaPlugin {
         });
     }
 
+    /**
+     * Blacklists a block. Blocks blacklisted won't get broadcasted when
+     * broken.
+     *
+     * @param block the block to blacklist
+     */
     public void blackList(Block block) {
         broadcastBlacklist.add(block);
     }
 
+    /**
+     * Blacklists multiple blocks. Blocks blacklisted won't get broadcasted
+     * when broken.
+     *
+     * @param blocks the blocks to blacklist
+     */
     public void blackList(Collection<Block> blocks) {
         broadcastBlacklist.addAll(blocks);
     }
 
+    /**
+     * Unblacklist a block.
+     *
+     * @param block the block to unblacklist
+     */
     public void unBlackList(Block block) {
         broadcastBlacklist.remove(block);
     }
 
+    /**
+     * Clear the blacklist.
+     *
+     * @return Count of blocks removed from the blacklist
+     */
     public int clearBlackList() {
         int size = broadcastBlacklist.size();
         broadcastBlacklist.clear();
         return size;
     }
 
+    /**
+     * Checks wether a block is blacklisted or not.
+     *
+     * @param block the block to check
+     * @return true if the block is blacklisted
+     */
     public boolean isBlackListed(Block block) {
         return broadcastBlacklist.contains(block);
     }
 
+    /**
+     * Checks wether a material should be broadcasted when broken
+     *
+     * @param material the material to check
+     * @return true if breaking a block of that material will trigger a
+     *         broadcast
+     */
     public boolean isWhitelisted(Material material) {
         return blocksToBroadcast.contains(material);
     }
 
+    /**
+     * Check if OreBroadcast is active in a world
+     *
+     * @param world the name of the world
+     * @return true if OreBroadcast is active in the world
+     */
     public boolean isWorldWhitelisted(String world) {
         return !worldWhitelistActive || worldWhitelist.contains(world);
     }
 
-    public void loadConfig() {
+    private void loadConfig() {
         // Create the list of materials to broadcast from the file
         List<String> configList = getConfig().getStringList("ores");
         blocksToBroadcast.clear();

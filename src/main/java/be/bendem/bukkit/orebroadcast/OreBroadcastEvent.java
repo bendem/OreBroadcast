@@ -1,5 +1,6 @@
 package be.bendem.bukkit.orebroadcast;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -16,80 +17,52 @@ public class OreBroadcastEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private String message;
-    private Player source;
+    private       String format;
+    private final Player source;
+    private final Block blockMined;
+    private final Set<Player> recipients;
+    private final Set<Block> vein;
     private boolean cancelled = false;
-    private Set<Player> recipients;
 
     /**
      * Broadcast event for OreBroadcast messages.
      *
-     * @param message the formatted message
+     * @param format the format of the message
      * @param source the player that mined the block
-     * @param recipients the players that will receive this message
+     * @param recipients the players that will receive this format
      */
-    public OreBroadcastEvent(String message, Player source, Set<Player> recipients) {
-        this.message = message;
+    public OreBroadcastEvent(String format, Player source, Block blockMined, Set<Player> recipients, Set<Block> vein) {
+        this.format = format;
         this.source = source;
+        this.blockMined = blockMined;
         this.recipients = recipients;
+        this.vein = vein;
     }
 
     /**
-     * Gets the recipients that this message will be sent to.
+     * Gets the format of the message.
+     * This format can contain:
+     * <li>{player_name}</li>
+     * <li>{real_player_name}</li>
+     * <li>{world}</li>
+     * <li>{count}</li>
+     * <li>{ore}</li>
+     * <li>{ore_color}</li>
+     * <li>{plural}</li>
      *
-     * @return the players that will receive this message
+     * @return the format of the message
      */
-    public Set<Player> getRecipients() {
-        return recipients;
+    public String getFormat() {
+        return format;
     }
 
     /**
-     * Sets the recipients that this message will be sent to.
+     * Sets the format use for the message
      *
-     * @param recipients the players that will receive this message
+     * @param format the new format for the message
      */
-    public void setRecipients(Set<Player> recipients) {
-        this.recipients = recipients;
-    }
-
-    /**
-     * Gets the formatted message which will be sent.
-     *
-     * @return the formatted message
-     */
-    public String getMessage() {
-        return this.message;
-    }
-
-    /**
-     * Sets the message which will be sent.
-     *
-     * @param message the new message to set
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    /**
-     * Gets the player.
-     *
-     * @return
-     * @deprecated Renamed, see {@link OreBroadcastEvent#getSource()}
-     */
-    @Deprecated
-    public Player getPlayer() {
-        return this.source;
-    }
-
-    /**
-     * Sets the player.
-     *
-     * @param player
-     * @deprecated Removed, this had no effects anyway
-     */
-    @Deprecated
-    public void setPlayer(Player player) {
-        throw new UnsupportedOperationException("This method is deprecated and does nothing!");
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     /**
@@ -99,6 +72,37 @@ public class OreBroadcastEvent extends Event implements Cancellable {
      */
     public Player getSource() {
         return this.source;
+    }
+
+    /**
+     * Gets the block which was mined by the player, triggering the event
+     *
+     * @return the block mined
+     */
+    public Block getBlockMined() {
+        return blockMined;
+    }
+
+    /**
+     * Gets the recipients that this message will be sent to.
+     * <p>
+     * You can modify this set directly
+     *
+     * @return the players that will receive this message
+     */
+    public Set<Player> getRecipients() {
+        return recipients;
+    }
+
+    /**
+     * Gets the vein of blocks corresponding to that message (you can
+     * modify that Set to reduce the size. Note that removed block
+     * won't get blacklisted and will then be broadcasted when broken).
+     *
+     * @return the vein
+     */
+    public Set<Block> getVein() {
+        return vein;
     }
 
     /**
@@ -113,6 +117,10 @@ public class OreBroadcastEvent extends Event implements Cancellable {
 
     /**
      * Sets the cancellation state of the event
+     * (If you cancel the event, the blocks of the vein will be broadcasted
+     * next time a block of the vein is broken)
+     * See {@link OreBroadcast#blackList(Block)} to blacklist blocks
+     * independently.
      *
      * @param cancel the new cancellation state
      */
