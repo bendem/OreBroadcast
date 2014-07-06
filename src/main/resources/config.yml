@@ -60,6 +60,12 @@ max-vein-size: 500
 # Block placed in creative will be broadcasted when a player not in creative break them.
 broadcast-creative-placed-blocks: true
 
+# Activates metrics. Metrics is a stat utility allowing the developper to get informations
+# about the server running the plugin.
+# This sends java version, plugin version, player count, etc.
+# This DOESN'T send names, chat, list of operators, ips, etc.
+metrics: true
+
 # Colors and color codes available :
 # Use the colors for the ore list and the color codes for the message
 #   black : 0           |     dark_blue : 1
