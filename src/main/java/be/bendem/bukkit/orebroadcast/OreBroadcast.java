@@ -6,7 +6,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -25,11 +27,17 @@ public class OreBroadcast extends JavaPlugin {
     private final Set<Material> blocksToBroadcast  = new HashSet<>();
     private final Set<String>   worldWhitelist     = new HashSet<>();
     private boolean worldWhitelistActive = false;
+    private boolean metricsActive = true;
+    private Metrics metrics;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         loadConfig();
+
+        if(metricsActive) {
+            startMetrics();
+        }
 
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
@@ -143,6 +151,38 @@ public class OreBroadcast extends JavaPlugin {
         worldWhitelistActive = getConfig().getBoolean("active-per-worlds", true);
         if(worldWhitelistActive) {
             worldWhitelist.addAll(getConfig().getStringList("active-worlds"));
+        }
+
+        boolean prev = metricsActive;
+        metricsActive = getConfig().getBoolean("metrics", true);
+        if(prev != metricsActive) {
+            if(metricsActive) {
+                startMetrics();
+            } else {
+                stopMetrics();
+            }
+        }
+    }
+
+    private void startMetrics() {
+        if(metrics == null) {
+            try {
+                metrics = new Metrics(this);
+            } catch(IOException e) {
+                getLogger().warning("Couldn't activate metrics :(");
+                return;
+            }
+        }
+        metrics.start();
+    }
+
+    private void stopMetrics() {
+        if(metrics != null) {
+            try {
+                metrics.disable();
+            } catch(IOException e) {
+                getLogger().warning("Error while disabling metrics");
+            }
         }
     }
 
