@@ -66,6 +66,15 @@ broadcast-creative-placed-blocks: true
 # This DOESN'T send names, chat, list of operators, ips, etc.
 metrics: true
 
+# Activate updater functionnalities (Checks curse api to see if a new update is available)
+updater:
+
+    # Check if a new version is available at startup
+    startup-check: true
+
+    # Warn ops when they connect if a new version is available
+    warn-ops: true
+
 # Colors and color codes available :
 # Use the colors for the ore list and the color codes for the message
 #   black : 0           |     dark_blue : 1

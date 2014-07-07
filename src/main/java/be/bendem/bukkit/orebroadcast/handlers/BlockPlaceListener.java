@@ -1,5 +1,6 @@
-package be.bendem.bukkit.orebroadcast;
+package be.bendem.bukkit.orebroadcast.handlers;
 
+import be.bendem.bukkit.orebroadcast.OreBroadcast;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -17,9 +18,7 @@ public class BlockPlaceListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         Block block = e.getBlock();
-        if(plugin.isWhitelisted(block.getType())
-                && plugin.isWorldWhitelisted(block.getWorld().getName())
-                && !plugin.isBlackListed(block)
+        if(plugin.isWhitelisted(block.getType()) && plugin.isWorldWhitelisted(block.getWorld().getName()) && !plugin.isBlackListed(block)
                 && (e.getPlayer().getGameMode() != GameMode.CREATIVE
                     || !plugin.getConfig().getBoolean("broadcast-creative-placed-blocks", true))) {
             plugin.blackList(block);

@@ -2,6 +2,9 @@ package be.bendem.bukkit.orebroadcast;
 
 import be.bendem.bukkit.orebroadcast.commands.Command;
 import be.bendem.bukkit.orebroadcast.commands.CommandHandler;
+import be.bendem.bukkit.orebroadcast.handlers.BlockBreakListener;
+import be.bendem.bukkit.orebroadcast.handlers.BlockPlaceListener;
+import net.gravitydevelopment.updater.Updater;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -29,6 +32,9 @@ public class OreBroadcast extends JavaPlugin {
     private boolean worldWhitelistActive = false;
     private boolean metricsActive = true;
     private Metrics metrics;
+    private Updater updater;
+    private boolean isUpdateAvailable = false;
+    private boolean isUpdated = false;
 
     @Override
     public void onEnable() {
@@ -37,6 +43,17 @@ public class OreBroadcast extends JavaPlugin {
 
         if(metricsActive) {
             startMetrics();
+        }
+
+        if(getConfig().getBoolean("updater.startup-check", true)) {
+            checkUpdate();
+            if(isUpdateAvailable) {
+                getLogger().warning(updater.getLatestName() + " is available, type '/ob update download' to download it");
+            }
+        }
+
+        if(getConfig().getBoolean("updater.warn-ops", true)) {
+            getServer().getPluginManager().registerEvents(new PlayerLoginListener(this), this);
         }
 
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
@@ -57,6 +74,40 @@ public class OreBroadcast extends JavaPlugin {
                 reloadConfig();
                 loadConfig();
                 sender.sendMessage("Config reloaded...");
+            }
+        });
+
+        commandHandler.register(new Command("update", "ob.commands.update") {
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                if(args.size() < 1) {
+                    sender.sendMessage("Not enough arguments");
+                    return;
+                }
+                if(isUpdated) {
+                    sender.sendMessage("An update has already been downloaded, restart the server to apply it");
+                    return;
+                }
+
+                if(args.get(0).equalsIgnoreCase("check")) {
+                    checkUpdate();
+                    if(isUpdateAvailable) {
+                        sender.sendMessage("Update available");
+                    } else {
+                        sender.sendMessage("No update available");
+                    }
+                    return;
+                }
+
+                if(args.get(0).equalsIgnoreCase("download")) {
+                    checkUpdate();
+                    if(isUpdateAvailable) {
+                        sender.sendMessage("Downloading update...");
+                        downloadUpdate();
+                    } else {
+                        sender.sendMessage("No update available");
+                    }
+                }
             }
         });
     }
@@ -153,6 +204,7 @@ public class OreBroadcast extends JavaPlugin {
             worldWhitelist.addAll(getConfig().getStringList("active-worlds"));
         }
 
+        // Handling metrics changes
         boolean prev = metricsActive;
         metricsActive = getConfig().getBoolean("metrics", true);
         if(prev != metricsActive) {
@@ -184,6 +236,26 @@ public class OreBroadcast extends JavaPlugin {
                 getLogger().warning("Error while disabling metrics");
             }
         }
+    }
+
+    private void checkUpdate() {
+        if(!isUpdateAvailable) {
+            updater = new OBUpdater(this, 72299, getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
+            isUpdateAvailable = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
+        }
+    }
+
+    private void downloadUpdate() {
+        updater = new OBUpdater(this, 72299, getFile(), Updater.UpdateType.NO_VERSION_CHECK, true);
+        isUpdated = true;
+    }
+
+    boolean isUpdateAvailable() {
+        return isUpdateAvailable;
+    }
+
+    boolean isUpdated() {
+        return isUpdated;
     }
 
 }

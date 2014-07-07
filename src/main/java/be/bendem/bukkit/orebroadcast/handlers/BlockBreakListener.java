@@ -1,5 +1,8 @@
-package be.bendem.bukkit.orebroadcast;
+package be.bendem.bukkit.orebroadcast.handlers;
 
+import be.bendem.bukkit.orebroadcast.OreBroadcast;
+import be.bendem.bukkit.orebroadcast.OreBroadcastEvent;
+import be.bendem.bukkit.orebroadcast.OreBroadcastException;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -27,9 +30,7 @@ public class BlockBreakListener implements Listener {
         // + creative users
         // + users without ob.broadcast permission
         // + users in a non whitelisted world
-        if(player.getGameMode() != GameMode.SURVIVAL
-                || !player.hasPermission("ob.broadcast")
-                || !plugin.isWorldWhitelisted(player.getWorld().getName())) {
+        if(player.getGameMode() != GameMode.SURVIVAL || !player.hasPermission("ob.broadcast") || !plugin.isWorldWhitelisted(player.getWorld().getName())) {
             return;
         }
 
