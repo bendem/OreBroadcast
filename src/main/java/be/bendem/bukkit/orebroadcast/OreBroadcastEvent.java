@@ -42,6 +42,7 @@ public class OreBroadcastEvent extends Event implements Cancellable {
     /**
      * Gets the format of the message.
      * This format can contain:
+     * <ul>
      * <li>{player_name}</li>
      * <li>{real_player_name}</li>
      * <li>{world}</li>
@@ -49,6 +50,7 @@ public class OreBroadcastEvent extends Event implements Cancellable {
      * <li>{ore}</li>
      * <li>{ore_color}</li>
      * <li>{plural}</li>
+     * </ul>
      *
      * @return the format of the message
      */
