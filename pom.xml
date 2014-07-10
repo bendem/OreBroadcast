@@ -146,7 +146,7 @@
                             <keywords>true</keywords>
                             <show>protected</show>
                             <stylesheet>java</stylesheet>
-                            <stylesheetfile>src/main/javadoc/javadoc.css</stylesheetfile>
+                            <stylesheetfile>src/main/javadoc/javadocs.css</stylesheetfile>
                             <reportOutputDirectory>/home/javadoc/javadoc/</reportOutputDirectory>
                             <destDir>${project.name}/${project.version}</destDir>
                         </configuration>

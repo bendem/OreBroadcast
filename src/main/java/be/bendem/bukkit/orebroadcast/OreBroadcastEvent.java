@@ -29,7 +29,9 @@ public class OreBroadcastEvent extends Event implements Cancellable {
      *
      * @param format the format of the message
      * @param source the player that mined the block
+     * @param blockMined the block which was mined by the player
      * @param recipients the players that will receive this format
+     * @param vein the complete vein containing the block mined
      */
     public OreBroadcastEvent(String format, Player source, Block blockMined, Set<Player> recipients, Set<Block> vein) {
         this.format = format;
