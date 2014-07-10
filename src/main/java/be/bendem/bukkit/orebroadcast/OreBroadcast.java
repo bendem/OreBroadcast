@@ -9,13 +9,16 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.mcstats.Metrics;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * OreBroadcast for Bukkit
@@ -110,6 +113,11 @@ public class OreBroadcast extends JavaPlugin {
                 }
             }
         });
+    }
+
+    @Override
+    public void onDisable() {
+        stopMetrics();
     }
 
     /**
@@ -229,12 +237,16 @@ public class OreBroadcast extends JavaPlugin {
     }
 
     private void stopMetrics() {
-        if(metrics != null) {
-            try {
-                metrics.disable();
-            } catch(IOException e) {
-                getLogger().warning("Error while disabling metrics");
+        // This is temporary while waiting for https://github.com/Hidendra/Plugin-Metrics/pull/43
+        try {
+            Field taskField = metrics.getClass().getDeclaredField("task");
+            taskField.setAccessible(true);
+            BukkitTask task = (BukkitTask) taskField.get(metrics);
+            if(task != null) {
+                task.cancel();
             }
+        } catch(NoSuchFieldException | IllegalAccessException e) {
+            getLogger().log(Level.WARNING, "Error while stopping metrics, please report this to the plugin author", e);
         }
     }
 
