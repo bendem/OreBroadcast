@@ -12,7 +12,6 @@ commands:
             /<ob> [reload] Reload config from file
             /<ob> [clear] Clear the content of the block blacklist
         description: OreBroadcast commands
-        permission: ob.commands.*
 
 permissions:
     ob.*:

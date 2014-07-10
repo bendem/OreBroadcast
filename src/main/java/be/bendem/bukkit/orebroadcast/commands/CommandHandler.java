@@ -1,5 +1,6 @@
 package be.bendem.bukkit.orebroadcast.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,12 +28,16 @@ public class CommandHandler implements CommandExecutor {
             return false;
         }
         Command command = commands.get(args[0]);
-        if(command != null && sender.hasPermission(command.getPermission())) {
+        if(command == null) {
+            return false;
+        }
+        if(sender.hasPermission(command.getPermission())) {
             List<String> argList = Arrays.asList(args).subList(1, args.length);
             commands.get(args[0]).execute(sender, argList);
-            return true;
+        } else {
+            sender.sendMessage(ChatColor.RED + "You don't have the permission to use that command.");
         }
-        return false;
+        return true;
     }
 
 }
