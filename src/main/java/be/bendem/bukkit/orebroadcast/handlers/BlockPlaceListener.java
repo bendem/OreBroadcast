@@ -9,7 +9,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class BlockPlaceListener implements Listener {
 
-    private OreBroadcast plugin;
+    private final OreBroadcast plugin;
 
     public BlockPlaceListener(OreBroadcast plugin) {
         this.plugin = plugin;

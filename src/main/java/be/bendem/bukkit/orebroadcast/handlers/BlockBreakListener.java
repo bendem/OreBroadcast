@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class BlockBreakListener implements Listener {
 
-    private OreBroadcast plugin;
+    private final OreBroadcast plugin;
 
     public BlockBreakListener(OreBroadcast plugin) {
         this.plugin = plugin;
