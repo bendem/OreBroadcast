@@ -237,6 +237,9 @@ public class OreBroadcast extends JavaPlugin {
     }
 
     private void stopMetrics() {
+        if(metrics == null) {
+            return;
+        }
         // This is temporary while waiting for https://github.com/Hidendra/Plugin-Metrics/pull/43
         try {
             Field taskField = metrics.getClass().getDeclaredField("task");
