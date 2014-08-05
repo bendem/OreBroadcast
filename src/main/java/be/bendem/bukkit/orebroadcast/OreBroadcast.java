@@ -4,8 +4,10 @@ import be.bendem.bukkit.orebroadcast.commands.Command;
 import be.bendem.bukkit.orebroadcast.commands.CommandHandler;
 import be.bendem.bukkit.orebroadcast.handlers.BlockBreakListener;
 import be.bendem.bukkit.orebroadcast.handlers.BlockPlaceListener;
+import be.bendem.bukkit.orebroadcast.handlers.PistonListener;
 import net.gravitydevelopment.updater.Updater;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -61,6 +63,7 @@ public class OreBroadcast extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
+        getServer().getPluginManager().registerEvents(new PistonListener(this), this);
 
         CommandHandler commandHandler = new CommandHandler(this, "ob");
         commandHandler.register(new Command("clear", "ob.commands.clear") {
@@ -150,6 +153,15 @@ public class OreBroadcast extends JavaPlugin {
     }
 
     /**
+     * Unblacklist multiple blocks.
+     *
+     * @param blocks the blocks to unblacklist
+     */
+    public void unBlackList(Collection<Block> blocks) {
+        broadcastBlacklist.removeAll(blocks);
+    }
+
+    /**
      * Clear the blacklist.
      *
      * @return Count of blocks removed from the blacklist
@@ -179,6 +191,16 @@ public class OreBroadcast extends JavaPlugin {
      */
     public boolean isWhitelisted(Material material) {
         return blocksToBroadcast.contains(material);
+    }
+
+    /**
+     * Check if OreBroadcast is active in a world
+     *
+     * @param world the world to check if OreBroadcast is active in
+     * @return true if OreBroadcast is active in the world
+     */
+    public boolean isWorldWhitelisted(World world) {
+        return isWorldWhitelisted(world.getName());
     }
 
     /**

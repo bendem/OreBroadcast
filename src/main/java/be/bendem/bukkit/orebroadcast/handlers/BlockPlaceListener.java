@@ -15,7 +15,7 @@ public class BlockPlaceListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent e) {
         Block block = e.getBlock();
         if(plugin.isWhitelisted(block.getType()) && plugin.isWorldWhitelisted(block.getWorld().getName()) && !plugin.isBlackListed(block)
