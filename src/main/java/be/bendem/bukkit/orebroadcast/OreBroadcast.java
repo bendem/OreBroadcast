@@ -5,7 +5,7 @@ import be.bendem.bukkit.orebroadcast.commands.CommandHandler;
 import be.bendem.bukkit.orebroadcast.handlers.BlockBreakListener;
 import be.bendem.bukkit.orebroadcast.handlers.BlockPlaceListener;
 import be.bendem.bukkit.orebroadcast.handlers.PistonListener;
-import net.gravitydevelopment.updater.Updater;
+import be.bendem.bukkit.orebroadcast.updater.OreBroadcastUpdater;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -31,15 +31,13 @@ public class OreBroadcast extends JavaPlugin {
 
     // As it's currently stored, blocks which have already been broadcasted
     // will be again after a server restart / reload.
-    private final Set<Block>    broadcastBlacklist = new HashSet<>();
-    private final Set<Material> blocksToBroadcast  = new HashSet<>();
-    private final Set<String>   worldWhitelist     = new HashSet<>();
-    private boolean worldWhitelistActive = false;
-    private boolean metricsActive = true;
-    private Metrics metrics;
-    private Updater updater;
-    private boolean isUpdateAvailable = false;
-    private boolean isUpdated = false;
+    private final Set<Block>    broadcastBlacklist   = new HashSet<>();
+    private final Set<Material> blocksToBroadcast    = new HashSet<>();
+    private final Set<String>   worldWhitelist       = new HashSet<>();
+    private       boolean       worldWhitelistActive = false;
+    private       boolean       metricsActive        = true;
+    private Metrics             metrics;
+    private OreBroadcastUpdater updater;
 
     @Override
     public void onEnable() {
@@ -50,11 +48,10 @@ public class OreBroadcast extends JavaPlugin {
             startMetrics();
         }
 
+        updater = new OreBroadcastUpdater(this, getFile());
+
         if(getConfig().getBoolean("updater.startup-check", true)) {
-            checkUpdate();
-            if(isUpdateAvailable) {
-                getLogger().warning(updater.getLatestName() + " is available, type '/ob update download' to download it");
-            }
+            updater.checkUpdate(null, false);
         }
 
         if(getConfig().getBoolean("updater.warn-ops", true)) {
@@ -66,11 +63,12 @@ public class OreBroadcast extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PistonListener(this), this);
 
         CommandHandler commandHandler = new CommandHandler(this, "ob");
-        commandHandler.register(new Command("clear", "ob.commands.clear") {
-            @Override
-            public void execute(CommandSender sender, List<String> args) {
-                int size = clearBlackList();
-                sender.sendMessage(size + " block" + (size > 1 ? "s" : "")  + " cleared...");
+        commandHandler.register(
+                new Command("clear", "ob.commands.clear") {
+                    @Override
+                    public void execute(CommandSender sender, List<String> args) {
+                        int size = clearBlackList();
+                        sender.sendMessage(size + " block" + (size > 1 ? "s" : "")  + " cleared...");
             }
         });
 
@@ -90,14 +88,14 @@ public class OreBroadcast extends JavaPlugin {
                     sender.sendMessage("Not enough arguments");
                     return;
                 }
-                if(isUpdated) {
+                if(updater.isUpdated()) {
                     sender.sendMessage("An update has already been downloaded, restart the server to apply it");
                     return;
                 }
 
                 if(args.get(0).equalsIgnoreCase("check")) {
-                    checkUpdate();
-                    if(isUpdateAvailable) {
+                    updater.checkUpdate(sender, false);
+                    if(updater.isUpdateAvailable()) {
                         sender.sendMessage("Update available");
                     } else {
                         sender.sendMessage("No update available");
@@ -106,13 +104,7 @@ public class OreBroadcast extends JavaPlugin {
                 }
 
                 if(args.get(0).equalsIgnoreCase("download")) {
-                    checkUpdate();
-                    if(isUpdateAvailable) {
-                        sender.sendMessage("Downloading update...");
-                        downloadUpdate();
-                    } else {
-                        sender.sendMessage("No update available");
-                    }
+                    updater.checkUpdate(sender, true);
                 }
             }
         });
@@ -121,6 +113,10 @@ public class OreBroadcast extends JavaPlugin {
     @Override
     public void onDisable() {
         stopMetrics();
+    }
+
+    public OreBroadcastUpdater getUpdater() {
+        return updater;
     }
 
     /**
@@ -273,26 +269,6 @@ public class OreBroadcast extends JavaPlugin {
         } catch(NoSuchFieldException | IllegalAccessException e) {
             getLogger().log(Level.WARNING, "Error while stopping metrics, please report this to the plugin author", e);
         }
-    }
-
-    private void checkUpdate() {
-        if(!isUpdateAvailable) {
-            updater = new OBUpdater(this, 72299, getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
-            isUpdateAvailable = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
-        }
-    }
-
-    private void downloadUpdate() {
-        updater = new OBUpdater(this, 72299, getFile(), Updater.UpdateType.NO_VERSION_CHECK, true);
-        isUpdated = true;
-    }
-
-    boolean isUpdateAvailable() {
-        return isUpdateAvailable;
-    }
-
-    boolean isUpdated() {
-        return isUpdated;
     }
 
 }

@@ -19,8 +19,8 @@ public class PlayerLoginListener implements Listener {
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent e) {
         if(e.getPlayer().hasPermission("ob.update.notification")
-                && plugin.isUpdateAvailable()
-                && !plugin.isUpdated()) {
+                && plugin.getUpdater().isUpdateAvailable()
+                && !plugin.getUpdater().isUpdated()) {
             e.getPlayer().sendMessage(
                 "[" + ChatColor.BLUE + plugin.getName() + ChatColor.RESET +
                 "] An update is available type /ob update download to download it"

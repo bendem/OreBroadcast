@@ -1,4 +1,4 @@
-package be.bendem.bukkit.orebroadcast;
+package be.bendem.bukkit.orebroadcast.updater;
 
 import net.gravitydevelopment.updater.Updater;
 import org.apache.commons.lang.StringUtils;
@@ -9,9 +9,9 @@ import java.io.File;
 /**
  * @author bendem
  */
-public class OBUpdater extends Updater {
+public class GravityUpdater extends Updater {
 
-    public OBUpdater(Plugin plugin, int id, File file, UpdateType type, boolean announce) {
+    public GravityUpdater(Plugin plugin, int id, File file, UpdateType type, boolean announce) {
         super(plugin, id, file, type, announce);
     }
 
