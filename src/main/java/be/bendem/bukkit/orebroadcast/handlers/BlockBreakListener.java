@@ -96,7 +96,7 @@ public class BlockBreakListener implements Listener {
         );
         broadcast(e.getRecipients(), formattedMessage);
 
-        plugin.getLogger().finer("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
+        plugin.getLogger().info("Event duration : " + (System.currentTimeMillis() - timer) + "ms");
     }
 
     private Set<Block> getVein(Block block) {

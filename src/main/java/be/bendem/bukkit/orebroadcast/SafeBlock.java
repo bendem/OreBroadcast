@@ -4,6 +4,8 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 
+import java.util.UUID;
+
 /**
  * SafeBlock contains informations about a block but doesn't prevents world
  * unloading (it doesn't contain informations about the server's worlds)
@@ -11,16 +13,16 @@ import org.bukkit.block.Block;
  */
 public class SafeBlock {
 
-    public final int    x;
-    public final int    y;
-    public final int    z;
-    public final String world;
+    public final int  x;
+    public final int  y;
+    public final int  z;
+    public final UUID world;
 
     public SafeBlock(Block block) {
-        this(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+        this(block.getX(), block.getY(), block.getZ(), block.getWorld().getUID());
     }
 
-    public SafeBlock(int x, int y, int z, String world) {
+    public SafeBlock(int x, int y, int z, UUID world) {
         Validate.notNull(world);
         this.x = x;
         this.y = y;

@@ -29,15 +29,13 @@ import java.util.logging.Level;
  */
 public class OreBroadcast extends JavaPlugin {
 
-    // As it's currently stored, blocks which have already been broadcasted
-    // will be again after a server restart / reload.
-    private final Set<Block>    broadcastBlacklist   = new HashSet<>();
-    private final Set<Material> blocksToBroadcast    = new HashSet<>();
-    private final Set<String>   worldWhitelist       = new HashSet<>();
-    private       boolean       worldWhitelistActive = false;
-    private       boolean       metricsActive        = true;
-    private Metrics             metrics;
+    private final Set<SafeBlock> broadcastBlacklist = new HashSet<>();
+    private final Set<Material> blocksToBroadcast = new HashSet<>();
+    private final Set<String> worldWhitelist = new HashSet<>();
+    private boolean worldWhitelistActive = false;
+    private boolean metricsActive = true;
     private OreBroadcastUpdater updater;
+    private Metrics metrics;
 
     @Override
     public void onEnable() {
@@ -126,7 +124,7 @@ public class OreBroadcast extends JavaPlugin {
      * @param block the block to blacklist
      */
     public void blackList(Block block) {
-        broadcastBlacklist.add(block);
+        broadcastBlacklist.add(new SafeBlock(block));
     }
 
     /**
@@ -136,7 +134,9 @@ public class OreBroadcast extends JavaPlugin {
      * @param blocks the blocks to blacklist
      */
     public void blackList(Collection<Block> blocks) {
-        broadcastBlacklist.addAll(blocks);
+        for(Block block : blocks) {
+            blackList(block);
+        }
     }
 
     /**
@@ -145,7 +145,7 @@ public class OreBroadcast extends JavaPlugin {
      * @param block the block to unblacklist
      */
     public void unBlackList(Block block) {
-        broadcastBlacklist.remove(block);
+        broadcastBlacklist.remove(new SafeBlock(block));
     }
 
     /**
@@ -154,7 +154,9 @@ public class OreBroadcast extends JavaPlugin {
      * @param blocks the blocks to unblacklist
      */
     public void unBlackList(Collection<Block> blocks) {
-        broadcastBlacklist.removeAll(blocks);
+        for(Block block : blocks) {
+            unBlackList(block);
+        }
     }
 
     /**
@@ -175,7 +177,7 @@ public class OreBroadcast extends JavaPlugin {
      * @return true if the block is blacklisted
      */
     public boolean isBlackListed(Block block) {
-        return broadcastBlacklist.contains(block);
+        return broadcastBlacklist.contains(new SafeBlock(block));
     }
 
     /**
