@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -23,7 +24,7 @@ public class BlockBreakListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         // Reject
@@ -122,7 +123,8 @@ public class BlockBreakListener implements Listener {
                     Block relative = block.getRelative(i, j, k);
                     if(!vein.contains(relative)                  // block already found
                             && equals(block, relative)           // block has not the same type
-                            && ((i != 0 || j != 0 || k != 0))) { // comparing block to itself
+                            && ((i != 0 || j != 0 || k != 0))    // comparing block to itself
+                            && !plugin.isBlackListed(relative)) {// don't consider blacklisted blocks
                         vein.add(relative);
                         getVein(relative, vein);
                     }
