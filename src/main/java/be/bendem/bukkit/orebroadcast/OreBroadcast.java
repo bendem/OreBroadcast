@@ -14,12 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.mcstats.Metrics;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -29,32 +31,11 @@ import java.util.logging.Level;
  */
 public class OreBroadcast extends JavaPlugin {
 
-    private final Set<SafeBlock> broadcastBlacklist = new HashSet<>();
-    private final Set<Material> blocksToBroadcast = new HashSet<>();
-    private final Set<String> worldWhitelist = new HashSet<>();
-    private boolean worldWhitelistActive = false;
-    private boolean metricsActive = true;
-    private OreBroadcastUpdater updater;
-    private Metrics metrics;
+    private Config config;
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-        loadConfig();
-
-        if(metricsActive) {
-            startMetrics();
-        }
-
-        updater = new OreBroadcastUpdater(this, getFile());
-
-        if(getConfig().getBoolean("updater.startup-check", true)) {
-            updater.checkUpdate(null, false);
-        }
-
-        if(getConfig().getBoolean("updater.warn-ops", true)) {
-            getServer().getPluginManager().registerEvents(new PlayerLoginListener(this), this);
-        }
+        config = new Config(this);
 
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
@@ -72,8 +53,7 @@ public class OreBroadcast extends JavaPlugin {
         commandHandler.register(new Command("reload", "ob.commands.reload") {
             @Override
             public void execute(CommandSender sender, List<String> args) {
-                reloadConfig();
-                loadConfig();
+                config.loadConfig();
                 sender.sendMessage("Config reloaded...");
             }
         });
@@ -85,14 +65,14 @@ public class OreBroadcast extends JavaPlugin {
                     sender.sendMessage("Not enough arguments");
                     return;
                 }
-                if(updater.isUpdated()) {
+                if(config.getUpdater().isUpdated()) {
                     sender.sendMessage("An update has already been downloaded, restart the server to apply it");
                     return;
                 }
 
                 if(args.get(0).equalsIgnoreCase("check")) {
-                    updater.checkUpdate(sender, false);
-                    if(updater.isUpdateAvailable()) {
+                    config.getUpdater().checkUpdate(sender, false);
+                    if(config.getUpdater().isUpdateAvailable()) {
                         sender.sendMessage("Update available");
                     } else {
                         sender.sendMessage("No update available");
@@ -101,7 +81,7 @@ public class OreBroadcast extends JavaPlugin {
                 }
 
                 if(args.get(0).equalsIgnoreCase("download")) {
-                    updater.checkUpdate(sender, true);
+                    config.getUpdater().checkUpdate(sender, true);
                 }
             }
         });
@@ -109,73 +89,15 @@ public class OreBroadcast extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        stopMetrics();
+        config.stopMetrics();
+    }
+
+    /* package */ File getJar() {
+        return getFile();
     }
 
     public OreBroadcastUpdater getUpdater() {
-        return updater;
-    }
-
-    private void loadConfig() {
-        // Create the list of materials to broadcast from the file
-        List<String> configList = getConfig().getStringList("ores");
-        blocksToBroadcast.clear();
-
-        for(String item : configList) {
-            Material material = Material.getMaterial(item.toUpperCase() + "_ORE");
-            blocksToBroadcast.add(material);
-            // Handle glowing redstone ore (id 74) and redstone ore (id 73)
-            if(material.equals(Material.REDSTONE_ORE)) {
-                blocksToBroadcast.add(Material.GLOWING_REDSTONE_ORE);
-            }
-        }
-
-        // Load worlds
-        worldWhitelist.clear();
-        worldWhitelistActive = getConfig().getBoolean("active-per-worlds", true);
-        if(worldWhitelistActive) {
-            worldWhitelist.addAll(getConfig().getStringList("active-worlds"));
-        }
-
-        // Handling metrics changes
-        boolean prev = metricsActive;
-        metricsActive = getConfig().getBoolean("metrics", true);
-        if(prev != metricsActive) {
-            if(metricsActive) {
-                startMetrics();
-            } else {
-                stopMetrics();
-            }
-        }
-    }
-
-    private void startMetrics() {
-        if(metrics == null) {
-            try {
-                metrics = new Metrics(this);
-            } catch(IOException e) {
-                getLogger().warning("Couldn't activate metrics :(");
-                return;
-            }
-        }
-        metrics.start();
-    }
-
-    private void stopMetrics() {
-        if(metrics == null) {
-            return;
-        }
-        // This is temporary while waiting for https://github.com/Hidendra/Plugin-Metrics/pull/43
-        try {
-            Field taskField = metrics.getClass().getDeclaredField("task");
-            taskField.setAccessible(true);
-            BukkitTask task = (BukkitTask) taskField.get(metrics);
-            if(task != null) {
-                task.cancel();
-            }
-        } catch(NoSuchFieldException | IllegalAccessException e) {
-            getLogger().log(Level.WARNING, "Error while stopping metrics, please report this to the plugin author", e);
-        }
+        return config.getUpdater();
     }
 
     /**
@@ -185,7 +107,7 @@ public class OreBroadcast extends JavaPlugin {
      * @param block the block to blacklist
      */
     public void blackList(Block block) {
-        broadcastBlacklist.add(new SafeBlock(block));
+        config.getBroadcastBlacklist().add(new SafeBlock(block));
     }
 
     /**
@@ -206,7 +128,7 @@ public class OreBroadcast extends JavaPlugin {
      * @param block the block to unblacklist
      */
     public void unBlackList(Block block) {
-        broadcastBlacklist.remove(new SafeBlock(block));
+        config.getBroadcastBlacklist().remove(new SafeBlock(block));
     }
 
     /**
@@ -226,8 +148,8 @@ public class OreBroadcast extends JavaPlugin {
      * @return Count of blocks removed from the blacklist
      */
     public int clearBlackList() {
-        int size = broadcastBlacklist.size();
-        broadcastBlacklist.clear();
+        int size = config.getBroadcastBlacklist().size();
+        config.getBroadcastBlacklist().clear();
         return size;
     }
 
@@ -238,7 +160,7 @@ public class OreBroadcast extends JavaPlugin {
      * @return true if the block is blacklisted
      */
     public boolean isBlackListed(Block block) {
-        return broadcastBlacklist.contains(new SafeBlock(block));
+        return config.getBroadcastBlacklist().contains(new SafeBlock(block));
     }
 
     /**
@@ -249,7 +171,7 @@ public class OreBroadcast extends JavaPlugin {
      *         broadcast
      */
     public boolean isWhitelisted(Material material) {
-        return blocksToBroadcast.contains(material);
+        return config.getBlocksToBroadcast().contains(material);
     }
 
     /**
@@ -269,7 +191,7 @@ public class OreBroadcast extends JavaPlugin {
      * @return true if OreBroadcast is active in the world
      */
     public boolean isWorldWhitelisted(String world) {
-        return !worldWhitelistActive || worldWhitelist.contains(world);
+        return !config.isWorldWhitelistActive() || config.getWorldWhitelist().contains(world);
     }
 
 }
