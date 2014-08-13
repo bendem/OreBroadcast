@@ -61,12 +61,11 @@ public class OreBroadcast extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PistonListener(this), this);
 
         CommandHandler commandHandler = new CommandHandler(this, "ob");
-        commandHandler.register(
-                new Command("clear", "ob.commands.clear") {
-                    @Override
-                    public void execute(CommandSender sender, List<String> args) {
-                        int size = clearBlackList();
-                        sender.sendMessage(size + " block" + (size > 1 ? "s" : "")  + " cleared...");
+        commandHandler.register(new Command("clear", "ob.commands.clear") {
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                int size = clearBlackList();
+                sender.sendMessage(size + " block" + (size > 1 ? "s" : "")  + " cleared...");
             }
         });
 

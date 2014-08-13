@@ -31,7 +31,9 @@ public class BlockBreakListener implements Listener {
         // + creative users
         // + users without ob.broadcast permission
         // + users in a non whitelisted world
-        if(player.getGameMode() != GameMode.SURVIVAL || !player.hasPermission("ob.broadcast") || !plugin.isWorldWhitelisted(player.getWorld().getName())) {
+        if(player.getGameMode() != GameMode.SURVIVAL
+                || !player.hasPermission("ob.broadcast")
+                || !plugin.isWorldWhitelisted(player.getWorld().getName())) {
             return;
         }
 
@@ -147,8 +149,14 @@ public class BlockBreakListener implements Listener {
     }
 
     private String format(String msg, Player player, int count, String ore, String color, boolean plural) {
-        return ChatColor.translateAlternateColorCodes(
-                '&', msg.replace("{player_name}", player.getDisplayName()).replace("{real_player_name}", player.getName()).replace("{world}", player.getWorld().getName()).replace("{count}", String.valueOf(count)).replace("{ore}", translateOre(ore, color)).replace("{ore_color}", "&" + ChatColor.valueOf(color).getChar()).replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : "")
+        return ChatColor.translateAlternateColorCodes('&', msg
+            .replace("{player_name}", player.getDisplayName())
+            .replace("{real_player_name}", player.getName())
+            .replace("{world}", player.getWorld().getName())
+            .replace("{count}", String.valueOf(count))
+            .replace("{ore}", translateOre(ore, color))
+            .replace("{ore_color}", "&" + ChatColor.valueOf(color).getChar())
+            .replace("{plural}", plural ? plugin.getConfig().getString("plural", "s") : "")
         );
     }
 
