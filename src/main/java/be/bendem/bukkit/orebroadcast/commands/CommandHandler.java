@@ -31,7 +31,7 @@ public class CommandHandler implements CommandExecutor {
         if(command == null) {
             return false;
         }
-        if(sender.hasPermission(command.getPermission())) {
+        if(command.getPermission() == null || sender.hasPermission(command.getPermission())) {
             List<String> argList = Arrays.asList(args).subList(1, args.length);
             commands.get(args[0]).execute(sender, argList);
         } else {
