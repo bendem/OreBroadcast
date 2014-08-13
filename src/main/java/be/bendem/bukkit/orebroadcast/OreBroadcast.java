@@ -116,6 +116,68 @@ public class OreBroadcast extends JavaPlugin {
         return updater;
     }
 
+    private void loadConfig() {
+        // Create the list of materials to broadcast from the file
+        List<String> configList = getConfig().getStringList("ores");
+        blocksToBroadcast.clear();
+
+        for(String item : configList) {
+            Material material = Material.getMaterial(item.toUpperCase() + "_ORE");
+            blocksToBroadcast.add(material);
+            // Handle glowing redstone ore (id 74) and redstone ore (id 73)
+            if(material.equals(Material.REDSTONE_ORE)) {
+                blocksToBroadcast.add(Material.GLOWING_REDSTONE_ORE);
+            }
+        }
+
+        // Load worlds
+        worldWhitelist.clear();
+        worldWhitelistActive = getConfig().getBoolean("active-per-worlds", true);
+        if(worldWhitelistActive) {
+            worldWhitelist.addAll(getConfig().getStringList("active-worlds"));
+        }
+
+        // Handling metrics changes
+        boolean prev = metricsActive;
+        metricsActive = getConfig().getBoolean("metrics", true);
+        if(prev != metricsActive) {
+            if(metricsActive) {
+                startMetrics();
+            } else {
+                stopMetrics();
+            }
+        }
+    }
+
+    private void startMetrics() {
+        if(metrics == null) {
+            try {
+                metrics = new Metrics(this);
+            } catch(IOException e) {
+                getLogger().warning("Couldn't activate metrics :(");
+                return;
+            }
+        }
+        metrics.start();
+    }
+
+    private void stopMetrics() {
+        if(metrics == null) {
+            return;
+        }
+        // This is temporary while waiting for https://github.com/Hidendra/Plugin-Metrics/pull/43
+        try {
+            Field taskField = metrics.getClass().getDeclaredField("task");
+            taskField.setAccessible(true);
+            BukkitTask task = (BukkitTask) taskField.get(metrics);
+            if(task != null) {
+                task.cancel();
+            }
+        } catch(NoSuchFieldException | IllegalAccessException e) {
+            getLogger().log(Level.WARNING, "Error while stopping metrics, please report this to the plugin author", e);
+        }
+    }
+
     /**
      * Blacklists a block. Blocks blacklisted won't get broadcasted when
      * broken.
@@ -208,68 +270,6 @@ public class OreBroadcast extends JavaPlugin {
      */
     public boolean isWorldWhitelisted(String world) {
         return !worldWhitelistActive || worldWhitelist.contains(world);
-    }
-
-    private void loadConfig() {
-        // Create the list of materials to broadcast from the file
-        List<String> configList = getConfig().getStringList("ores");
-        blocksToBroadcast.clear();
-
-        for(String item : configList) {
-            Material material = Material.getMaterial(item.toUpperCase() + "_ORE");
-            blocksToBroadcast.add(material);
-            // Handle glowing redstone ore (id 74) and redstone ore (id 73)
-            if(material.equals(Material.REDSTONE_ORE)) {
-                blocksToBroadcast.add(Material.GLOWING_REDSTONE_ORE);
-            }
-        }
-
-        // Load worlds
-        worldWhitelist.clear();
-        worldWhitelistActive = getConfig().getBoolean("active-per-worlds", true);
-        if(worldWhitelistActive) {
-            worldWhitelist.addAll(getConfig().getStringList("active-worlds"));
-        }
-
-        // Handling metrics changes
-        boolean prev = metricsActive;
-        metricsActive = getConfig().getBoolean("metrics", true);
-        if(prev != metricsActive) {
-            if(metricsActive) {
-                startMetrics();
-            } else {
-                stopMetrics();
-            }
-        }
-    }
-
-    private void startMetrics() {
-        if(metrics == null) {
-            try {
-                metrics = new Metrics(this);
-            } catch(IOException e) {
-                getLogger().warning("Couldn't activate metrics :(");
-                return;
-            }
-        }
-        metrics.start();
-    }
-
-    private void stopMetrics() {
-        if(metrics == null) {
-            return;
-        }
-        // This is temporary while waiting for https://github.com/Hidendra/Plugin-Metrics/pull/43
-        try {
-            Field taskField = metrics.getClass().getDeclaredField("task");
-            taskField.setAccessible(true);
-            BukkitTask task = (BukkitTask) taskField.get(metrics);
-            if(task != null) {
-                task.cancel();
-            }
-        } catch(NoSuchFieldException | IllegalAccessException e) {
-            getLogger().log(Level.WARNING, "Error while stopping metrics, please report this to the plugin author", e);
-        }
     }
 
 }
