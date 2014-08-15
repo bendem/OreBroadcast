@@ -6,6 +6,7 @@ import be.bendem.bukkit.orebroadcast.handlers.BlockBreakListener;
 import be.bendem.bukkit.orebroadcast.handlers.BlockPlaceListener;
 import be.bendem.bukkit.orebroadcast.handlers.PistonListener;
 import be.bendem.bukkit.orebroadcast.updater.OreBroadcastUpdater;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -85,6 +86,7 @@ public class OreBroadcast extends JavaPlugin {
             @Override
             public void execute(CommandSender sender, List<String> args) {
                 if(!(sender instanceof Player)) {
+                    sender.sendMessage(ChatColor.RED + "Only players can optout");
                     return;
                 }
                 UUID uuid = ((Player) sender).getUniqueId();
