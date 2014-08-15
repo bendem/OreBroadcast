@@ -30,6 +30,7 @@ public class OreBroadcast extends JavaPlugin {
     @Override
     public void onEnable() {
         config = new Config(this);
+        config.loadConfig();
 
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
