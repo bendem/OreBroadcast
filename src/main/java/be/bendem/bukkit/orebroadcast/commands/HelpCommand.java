@@ -13,7 +13,7 @@ public class HelpCommand extends Command {
     private final CommandHandler handler;
 
     protected HelpCommand(CommandHandler handler) {
-        super("help");
+        super("help", "Displays the commands you can use", null);
         this.handler = handler;
     }
 

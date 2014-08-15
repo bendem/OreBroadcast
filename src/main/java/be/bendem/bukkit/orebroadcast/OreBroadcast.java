@@ -38,7 +38,7 @@ public class OreBroadcast extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PistonListener(this), this);
 
         CommandHandler commandHandler = new CommandHandler(this, "ob");
-        commandHandler.register(new Command("clear", "ob.commands.clear") {
+        commandHandler.register(new Command("clear", "Clears blacklisted blocks", "ob.commands.clear") {
             @Override
             public void execute(CommandSender sender, List<String> args) {
                 int size = clearBlackList();
@@ -46,7 +46,7 @@ public class OreBroadcast extends JavaPlugin {
             }
         });
 
-        commandHandler.register(new Command("reload", "ob.commands.reload") {
+        commandHandler.register(new Command("reload", "Reloads OreBroadcast config", "ob.commands.reload") {
             @Override
             public void execute(CommandSender sender, List<String> args) {
                 config.loadConfig();
@@ -54,7 +54,7 @@ public class OreBroadcast extends JavaPlugin {
             }
         });
 
-        commandHandler.register(new Command("update", "ob.commands.update") {
+        commandHandler.register(new Command("update", "Checks/Updates OreBroadcast version - Usage: update <check|update>", "ob.commands.update") {
             @Override
             public void execute(CommandSender sender, List<String> args) {
                 if(args.size() < 1) {
@@ -82,7 +82,7 @@ public class OreBroadcast extends JavaPlugin {
             }
         });
 
-        commandHandler.register(new Command("optout", "ob.commands.optout") {
+        commandHandler.register(new Command("optout", "Toggles OreBroadcast messages for yourself", "ob.commands.optout") {
             @Override
             public void execute(CommandSender sender, List<String> args) {
                 if(!(sender instanceof Player)) {
