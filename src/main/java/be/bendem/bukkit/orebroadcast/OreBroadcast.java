@@ -10,19 +10,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
-import org.mcstats.Metrics;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 
 /**
  * OreBroadcast for Bukkit
@@ -85,6 +79,23 @@ public class OreBroadcast extends JavaPlugin {
                 }
             }
         });
+
+        commandHandler.register(new Command("optout", "ob.commands.optout") {
+            @Override
+            public void execute(CommandSender sender, List<String> args) {
+                if(!(sender instanceof Player)) {
+                    return;
+                }
+                UUID uuid = ((Player) sender).getUniqueId();
+                if(config.isOptOut(uuid)) {
+                    config.unOptOutPlayer(uuid);
+                    sender.sendMessage("You will now receive the ore broadcasts");
+                } else {
+                    config.optOutPlayer(uuid);
+                    sender.sendMessage("You won't receive ore broadcasts anymore");
+                }
+            }
+        });
     }
 
     @Override
@@ -98,6 +109,10 @@ public class OreBroadcast extends JavaPlugin {
 
     public OreBroadcastUpdater getUpdater() {
         return config.getUpdater();
+    }
+
+    public boolean isOptOut(Player player) {
+        return config.isOptOut(player.getUniqueId());
     }
 
     /**
