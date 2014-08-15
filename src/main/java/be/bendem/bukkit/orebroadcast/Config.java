@@ -20,12 +20,12 @@ import java.util.logging.Level;
 
 /* package */ class Config {
 
-    private static final String PLAYER_FILE = "players.dat";
     private final OreBroadcast plugin;
     private final Set<SafeBlock> broadcastBlacklist   = new HashSet<>();
     private final Set<Material>  blocksToBroadcast    = new HashSet<>();
     private final Set<String>    worldWhitelist       = new HashSet<>();
     private final Set<UUID>      optOutPlayers        = new HashSet<>();
+    private final File           playerFile;
     private       boolean        worldWhitelistActive = false;
     private       boolean        metricsActive        = true;
     private OreBroadcastUpdater updater;
@@ -33,6 +33,7 @@ import java.util.logging.Level;
 
     /* package */ Config(OreBroadcast plugin) {
         this.plugin = plugin;
+        playerFile = new File(plugin.getDataFolder(), "players.dat");
         plugin.saveDefaultConfig();
     }
 
@@ -79,14 +80,19 @@ import java.util.logging.Level;
         }
 
         // Load opt out players
+        if(!playerFile.exists()) {
+            return;
+        }
         optOutPlayers.clear();
-        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(new File(plugin.getDataFolder(), PLAYER_FILE)))) {
-            Object o = stream.readObject();
-            if(o instanceof Set<?>) {
-                optOutPlayers.addAll((Set<UUID>) o);
-            }
+        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(playerFile))) {
+            @SuppressWarnings("unchecked")
+            Set<UUID> uuids = (Set<UUID>) stream.readObject();
+            optOutPlayers.addAll(uuids);
         } catch(IOException | ClassNotFoundException e) {
             plugin.getLogger().severe("Failed to read opt out players from file");
+            e.printStackTrace(System.err);
+        } catch(ClassCastException e) {
+            plugin.getLogger().severe("Invalid players.dat file");
             e.printStackTrace(System.err);
         }
     }
@@ -106,7 +112,7 @@ import java.util.logging.Level;
     }
 
     private void saveOptOutPlayers() {
-        try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(new File(plugin.getDataFolder(), PLAYER_FILE)))) {
+        try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(playerFile))) {
             stream.writeObject(optOutPlayers);
         } catch(IOException e) {
             plugin.getLogger().severe("Failed to write opt out players to file");
