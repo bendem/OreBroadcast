@@ -17,6 +17,7 @@ public class CommandHandler implements CommandExecutor {
     public CommandHandler(JavaPlugin plugin, String command) {
         plugin.getCommand(command).setExecutor(this);
         commands = new HashMap<>();
+        register(new HelpCommand(this));
     }
 
     public void register(Command cmd) {
@@ -38,6 +39,10 @@ public class CommandHandler implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "You don't have the permission to use that command.");
         }
         return true;
+    }
+
+    /* package */ Map<String, Command> getCommands() {
+        return commands;
     }
 
 }

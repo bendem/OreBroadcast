@@ -8,9 +8,7 @@ website: ${pom.url}
 commands:
     ob:
         usage: |
-            Commands available:
-            /<ob> [reload] Reload config from file
-            /<ob> [clear] Clear the content of the block blacklist
+            OreBroadcast command. Type '/ob help' for more informations
         description: OreBroadcast commands
 
 permissions:
@@ -36,6 +34,9 @@ permissions:
     ob.commands.update:
         description: Players with this permission can check and download updates
         default: op
+    ob.commands.optout:
+        description: Players with this permission can opt out from the plugin broadcasts
+        default: true
     ob.broadcast:
         description: Players with this permission will send messages when they find ores.
         default: true
