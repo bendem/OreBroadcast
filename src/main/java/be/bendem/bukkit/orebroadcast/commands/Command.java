@@ -31,6 +31,10 @@ public abstract class Command {
 
     public abstract void execute(CommandSender sender, List<String> args);
 
+    public boolean hasPermission(CommandSender sender) {
+        return permission == null || sender.hasPermission(permission);
+    }
+
     public String getName() {
         return name;
     }

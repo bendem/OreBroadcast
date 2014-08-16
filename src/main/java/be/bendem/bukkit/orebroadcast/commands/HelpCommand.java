@@ -21,7 +21,7 @@ public class HelpCommand extends Command {
     public void execute(CommandSender sender, List<String> args) {
         StringBuilder builder = new StringBuilder("OreBroadcast commands: \n");
         for(Command command : handler.getCommands().values()) {
-            if(command.getPermission() == null || sender.hasPermission(command.getPermission())) {
+            if(command.hasPermission(sender)) {
                 builder.append("- ").append(ChatColor.BLUE).append(command.getName()).append(ChatColor.RESET);
                 if(command.getDescription() != null) {
                     builder.append(": ").append(command.getDescription());
