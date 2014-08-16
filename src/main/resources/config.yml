@@ -60,6 +60,9 @@ max-vein-size: 500
 # Block placed in creative will be broadcasted when a player not in creative break them.
 broadcast-creative-placed-blocks: true
 
+# Displays the time the block break handler take in the console.
+timing-debug: false
+
 # Activates metrics. Metrics is a stat utility allowing the developper to get informations
 # about the server running the plugin.
 # This sends java version, plugin version, player count, etc.
