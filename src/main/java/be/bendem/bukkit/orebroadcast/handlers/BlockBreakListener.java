@@ -59,7 +59,7 @@ public class BlockBreakListener implements Listener {
         // Get recipients
         Set<Player> recipients = new HashSet<>();
         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-            if(!onlinePlayer.hasPermission("ob.receive") || !plugin.isOptOut(onlinePlayer)) {
+            if(onlinePlayer.hasPermission("ob.receive") && !plugin.isOptOut(onlinePlayer)) {
                 recipients.add(onlinePlayer);
             }
         }
