@@ -61,16 +61,13 @@ public class PistonListener implements Listener {
             return;
         }
 
-        plugin.getLogger().info("----");
         java.util.List<Block> blocks = e.getBlocks();
         for(int i = blocks.size() - 1; i >= 0; i--) {
             Block block = blocks.get(i);
             if(plugin.isWhitelisted(block.getType()) && plugin.isBlackListed(block)) {
                 plugin.unBlackList(block);
                 plugin.blackList(block.getRelative(e.getDirection()));
-                plugin.getLogger().info("Blacklisting next block: " + block.getRelative(e.getDirection()).getType().name());
             }
-            plugin.getLogger().info(block.getType().name());
         }
     }
 
